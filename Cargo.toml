@@ -1,7 +1,0 @@
-[package]
-name = "firefly-emulator"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-bevy = "0.13.1"
