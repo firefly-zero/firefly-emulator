@@ -17,7 +17,7 @@ fn main() -> Result<(), core::convert::Infallible> {
         storage: firefly_hosted::Storage::new(".."),
         reader: std::marker::PhantomData,
     };
-    let mut runtime = firefly_runtime::Runtime::new(device, "zig-triangle").unwrap();
+    let mut runtime = firefly_runtime::Runtime::new(device, "go-triangle").unwrap();
 
     let output_settings = OutputSettingsBuilder::new()
         .scale(4)
