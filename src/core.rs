@@ -5,11 +5,11 @@ use embedded_graphics_simulator::{
     OutputSettingsBuilder, SimulatorDisplay, SimulatorEvent, Window,
 };
 
-const WIDTH: usize = 320;
-const HEIGHT: usize = 240;
-
 pub(crate) fn run() -> Result<(), Error> {
-    let size = Size::new(WIDTH as u32, HEIGHT as u32);
+    let size = Size::new(
+        firefly_runtime::WIDTH as u32,
+        firefly_runtime::HEIGHT as u32,
+    );
     let display = SimulatorDisplay::<Rgb888>::new(size);
     let device = firefly_runtime::Device {
         display,
