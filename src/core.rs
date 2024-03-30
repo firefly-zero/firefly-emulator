@@ -18,7 +18,7 @@ pub(crate) fn run() -> Result<(), Error> {
         storage: firefly_hosted::Storage::new(".."),
         reader: std::marker::PhantomData,
     };
-    let mut runtime = firefly_runtime::Runtime::new(device, "go-animation")?;
+    let mut runtime = firefly_runtime::Runtime::new(device, "demo.go-animation")?;
 
     let output_settings = OutputSettingsBuilder::new()
         .scale(4)
