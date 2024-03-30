@@ -1,39 +1,10 @@
-use embedded_graphics::pixelcolor::Rgb888;
-use embedded_graphics::prelude::*;
-use embedded_graphics_simulator::{
-    OutputSettingsBuilder, SimulatorDisplay, SimulatorEvent, Window,
-};
+mod core;
+mod error;
 
-const WIDTH: usize = 320;
-const HEIGHT: usize = 240;
-
-fn main() -> Result<(), core::convert::Infallible> {
-    let size = Size::new(WIDTH as u32, HEIGHT as u32);
-    let display = SimulatorDisplay::<Rgb888>::new(size);
-    let device = firefly_runtime::Device {
-        display,
-        timer: firefly_hosted::Timer::new(),
-        input: firefly_hosted::Input::new(),
-        storage: firefly_hosted::Storage::new(".."),
-        reader: std::marker::PhantomData,
-    };
-    let mut runtime = firefly_runtime::Runtime::new(device, "go-triangle").unwrap();
-
-    let output_settings = OutputSettingsBuilder::new()
-        .scale(4)
-        .pixel_spacing(1)
-        // make FPS intentionally too high, let the runtime manage it
-        .max_fps(120)
-        .build();
-    let mut window = Window::new("Firefly emulator", &output_settings);
-    runtime.start().unwrap();
-    loop {
-        runtime.update().unwrap();
-        window.update(runtime.display());
-        for event in window.events() {
-            if event == SimulatorEvent::Quit {
-                return Ok(());
-            }
-        }
+fn main() {
+    let res = crate::core::run();
+    if let Err(err) = res {
+        println!("{err}");
+        std::process::exit(1)
     }
 }
