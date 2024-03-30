@@ -18,11 +18,11 @@ pub(crate) fn run() -> Result<(), Error> {
         storage: firefly_hosted::Storage::new(".."),
         reader: std::marker::PhantomData,
     };
-    let mut runtime = firefly_runtime::Runtime::new(device, "go-triangle")?;
+    let mut runtime = firefly_runtime::Runtime::new(device, "go-animation")?;
 
     let output_settings = OutputSettingsBuilder::new()
         .scale(4)
-        .pixel_spacing(1)
+        .pixel_spacing(0)
         // make FPS intentionally too high, let the runtime manage it
         .max_fps(120)
         .build();
