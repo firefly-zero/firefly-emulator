@@ -4,7 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+# For accessing peripherals
 firefly-hosted = { path = "../firefly-hosted" }
+# For running the app
 firefly-runtime = { path = "../firefly-runtime" }
+# For drawing custom menus
 embedded-graphics = "0.8.1"
+# For showing frame buffer on the screen
 embedded-graphics-simulator = "0.6.0"
