@@ -12,13 +12,12 @@ pub(crate) fn run() -> Result<(), Error> {
     );
     let display = SimulatorDisplay::<Rgb888>::new(size);
     let device = firefly_runtime::Device {
-        display,
-        timer: firefly_hosted::Timer::new(),
-        input: firefly_hosted::Input::new(),
+        timer:   firefly_hosted::Timer::new(),
+        input:   firefly_hosted::Input::new(),
         storage: firefly_hosted::Storage::new(".."),
-        reader: std::marker::PhantomData,
+        reader:  std::marker::PhantomData,
     };
-    let mut runtime = firefly_runtime::Runtime::new(device, "demo", "go-animation")?;
+    let mut runtime = firefly_runtime::Runtime::new(device, display, "demo", "go-animation")?;
 
     let output_settings = OutputSettingsBuilder::new()
         .scale(4)
