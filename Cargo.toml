@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 # For accessing peripherals
-firefly-hosted = { path = "../firefly-hosted" }
+firefly-device = { path = "../firefly-device" }
 # For running the app
 firefly-runtime = { path = "../firefly-runtime" }
 # For drawing custom menus

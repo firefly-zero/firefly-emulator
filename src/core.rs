@@ -4,6 +4,7 @@ use embedded_graphics::prelude::*;
 use embedded_graphics_simulator::{
     OutputSettingsBuilder, SimulatorDisplay, SimulatorEvent, Window,
 };
+use firefly_device::{Device, DeviceImpl};
 
 pub(crate) fn run() -> Result<(), Error> {
     let size = Size::new(
@@ -11,12 +12,7 @@ pub(crate) fn run() -> Result<(), Error> {
         firefly_runtime::HEIGHT as u32,
     );
     let display = SimulatorDisplay::<Rgb888>::new(size);
-    let device = firefly_runtime::Device {
-        timer:   firefly_hosted::Timer::new(),
-        input:   firefly_hosted::Input::new(),
-        storage: firefly_hosted::Storage::new(".."),
-        reader:  std::marker::PhantomData,
-    };
+    let device = DeviceImpl::new("..");
     let mut runtime = firefly_runtime::Runtime::new(device, display, "demo", "go-animation")?;
 
     let output_settings = OutputSettingsBuilder::new()
