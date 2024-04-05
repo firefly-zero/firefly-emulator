@@ -13,7 +13,7 @@ pub(crate) fn run() -> Result<(), Error> {
     );
     let display = SimulatorDisplay::<Rgb888>::new(size);
     let device = DeviceImpl::new("..");
-    let mut runtime = firefly_runtime::Runtime::new(device, display, "demo", "go-touchpad")?;
+    let mut runtime = firefly_runtime::Runtime::new(device, display, "demo", "go-text")?;
 
     let output_settings = OutputSettingsBuilder::new()
         .scale(4)
