@@ -1,6 +1,6 @@
 use core::fmt::Display;
 
-pub(crate) enum Error {
+pub enum Error {
     Runtime(firefly_runtime::Error),
 }
 

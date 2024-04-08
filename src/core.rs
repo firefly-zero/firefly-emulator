@@ -6,14 +6,14 @@ use embedded_graphics_simulator::{
 };
 use firefly_device::{Device, DeviceImpl};
 
-pub(crate) fn run() -> Result<(), Error> {
+pub fn run_emulator(author_id: &str, app_id: &str) -> Result<(), Error> {
     let size = Size::new(
         firefly_runtime::WIDTH as u32,
         firefly_runtime::HEIGHT as u32,
     );
     let display = SimulatorDisplay::<Rgb888>::new(size);
     let device = DeviceImpl::new("..");
-    let mut runtime = firefly_runtime::Runtime::new(device, display, "demo", "go-touchpad")?;
+    let mut runtime = firefly_runtime::Runtime::new(device, display, author_id, app_id)?;
 
     let output_settings = OutputSettingsBuilder::new()
         .scale(4)
