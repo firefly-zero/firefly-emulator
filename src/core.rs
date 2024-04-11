@@ -1,10 +1,12 @@
 use crate::error::Error;
+use directories::ProjectDirs;
 use embedded_graphics::pixelcolor::Rgb888;
 use embedded_graphics::prelude::*;
 use embedded_graphics_simulator::{
     OutputSettingsBuilder, SimulatorDisplay, SimulatorEvent, Window,
 };
-use firefly_device::{Device, DeviceImpl};
+use firefly_device::DeviceImpl;
+use std::path::PathBuf;
 
 pub fn run_emulator(author_id: &str, app_id: &str) -> Result<(), Error> {
     let size = Size::new(
@@ -12,7 +14,8 @@ pub fn run_emulator(author_id: &str, app_id: &str) -> Result<(), Error> {
         firefly_runtime::HEIGHT as u32,
     );
     let display = SimulatorDisplay::<Rgb888>::new(size);
-    let device = DeviceImpl::new("..");
+    let vfs_path = get_vfs_path();
+    let device = DeviceImpl::new(vfs_path);
     let mut runtime = firefly_runtime::Runtime::new(device, display, author_id, app_id)?;
 
     let output_settings = OutputSettingsBuilder::new()
@@ -31,5 +34,12 @@ pub fn run_emulator(author_id: &str, app_id: &str) -> Result<(), Error> {
                 return Ok(());
             }
         }
+    }
+}
+
+pub(crate) fn get_vfs_path() -> PathBuf {
+    match ProjectDirs::from("com", "firefly", "firefly") {
+        Some(dirs) => dirs.data_dir().to_owned(),
+        None => PathBuf::from(".firefly"),
     }
 }
