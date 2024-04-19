@@ -9,6 +9,8 @@ use firefly_device::DeviceImpl;
 use firefly_runtime::*;
 use std::path::PathBuf;
 
+type Config = RuntimeConfig<SimulatorDisplay<Rgb888>, Rgb888>;
+
 pub fn run_emulator() -> Result<(), Error> {
     let size = Size::new(WIDTH as u32, HEIGHT as u32);
     let display = SimulatorDisplay::<Rgb888>::new(size);
@@ -22,11 +24,21 @@ pub fn run_emulator() -> Result<(), Error> {
         meta.author_id.try_into().unwrap(),
         meta.app_id.try_into().unwrap(),
     );
-    let config = RuntimeConfig {
-        id,
+    let mut config = RuntimeConfig {
+        id: Some(id),
         device,
         display,
     };
+    loop {
+        config = match run_app(config)? {
+            Some(config) => config,
+            None => break,
+        };
+    }
+    Ok(())
+}
+
+fn run_app(config: Config) -> Result<Option<Config>, Error> {
     let mut runtime = Runtime::new(config)?;
 
     let output_settings = OutputSettingsBuilder::new()
@@ -38,11 +50,17 @@ pub fn run_emulator() -> Result<(), Error> {
     let mut window = Window::new("Firefly emulator", &output_settings);
     runtime.start()?;
     loop {
-        runtime.update()?;
+        let exit = runtime.update()?;
+        // Exit requested. Finalize runtime and get ownership of the device back.
+        if exit {
+            let config = runtime.into_config();
+            return Ok(Some(config));
+        }
         window.update(runtime.display());
         for event in window.events() {
+            // ESC is pressed. Exit the emulator.
             if event == SimulatorEvent::Quit {
-                return Ok(());
+                return Ok(None);
             }
         }
     }
