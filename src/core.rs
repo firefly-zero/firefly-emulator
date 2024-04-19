@@ -6,13 +6,11 @@ use embedded_graphics_simulator::{
     OutputSettingsBuilder, SimulatorDisplay, SimulatorEvent, Window,
 };
 use firefly_device::DeviceImpl;
+use firefly_runtime::*;
 use std::path::PathBuf;
 
 pub fn run_emulator() -> Result<(), Error> {
-    let size = Size::new(
-        firefly_runtime::WIDTH as u32,
-        firefly_runtime::HEIGHT as u32,
-    );
+    let size = Size::new(WIDTH as u32, HEIGHT as u32);
     let display = SimulatorDisplay::<Rgb888>::new(size);
     let vfs_path = get_vfs_path();
 
@@ -20,7 +18,16 @@ pub fn run_emulator() -> Result<(), Error> {
     let meta = firefly_meta::ShortMeta::decode(&meta_raw).unwrap();
 
     let device = DeviceImpl::new(vfs_path);
-    let mut runtime = firefly_runtime::Runtime::new(device, display, meta.author_id, meta.app_id)?;
+    let id = FullID::new(
+        meta.author_id.try_into().unwrap(),
+        meta.app_id.try_into().unwrap(),
+    );
+    let config = RuntimeConfig {
+        id,
+        device,
+        display,
+    };
+    let mut runtime = Runtime::new(config)?;
 
     let output_settings = OutputSettingsBuilder::new()
         .scale(4)
