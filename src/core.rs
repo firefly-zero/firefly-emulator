@@ -29,17 +29,6 @@ pub fn run_emulator() -> Result<(), Error> {
         device,
         display,
     };
-    loop {
-        config = match run_app(config)? {
-            Some(config) => config,
-            None => break,
-        };
-    }
-    Ok(())
-}
-
-fn run_app(config: Config) -> Result<Option<Config>, Error> {
-    let mut runtime = Runtime::new(config)?;
 
     let output_settings = OutputSettingsBuilder::new()
         .scale(4)
@@ -48,6 +37,18 @@ fn run_app(config: Config) -> Result<Option<Config>, Error> {
         .max_fps(120)
         .build();
     let mut window = Window::new("Firefly emulator", &output_settings);
+
+    loop {
+        config = match run_app(&mut window, config)? {
+            Some(config) => config,
+            None => break,
+        };
+    }
+    Ok(())
+}
+
+fn run_app(window: &mut Window, config: Config) -> Result<Option<Config>, Error> {
+    let mut runtime = Runtime::new(config)?;
     runtime.start()?;
     loop {
         let exit = runtime.update()?;
