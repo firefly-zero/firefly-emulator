@@ -16,16 +16,9 @@ pub fn run_emulator() -> Result<(), Error> {
     let display = SimulatorDisplay::<Rgb888>::new(size);
     let vfs_path = get_vfs_path();
 
-    let meta_raw = std::fs::read(vfs_path.join("sys").join("new-app")).unwrap();
-    let meta = firefly_meta::ShortMeta::decode(&meta_raw).unwrap();
-
     let device = DeviceImpl::new(vfs_path);
-    let id = FullID::new(
-        meta.author_id.try_into().unwrap(),
-        meta.app_id.try_into().unwrap(),
-    );
     let mut config = RuntimeConfig {
-        id: Some(id),
+        id: None,
         device,
         display,
     };
