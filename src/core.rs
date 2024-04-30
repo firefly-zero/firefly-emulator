@@ -82,25 +82,26 @@ fn handle_key_up(keycode: Keycode, input: &mut firefly_device::InputState) {
         Keycode::X => input.buttons[1] = false,
         Keycode::A => input.buttons[2] = false,
         Keycode::S => input.buttons[3] = false,
-        Keycode::Tab => input.buttons[4] = false,
-        Keycode::Left => {
+        Keycode::Tab | Keycode::Backspace => input.buttons[4] = false,
+        Keycode::Left | Keycode::Right | Keycode::Kp4 | Keycode::Kp6 => {
             if let Some(pad) = input.pad.as_mut() {
-                pad.x = 0
+                pad.x = 0;
+                if pad.y == 0 {
+                    input.pad = None;
+                }
             }
         }
-        Keycode::Right => {
+        Keycode::Up | Keycode::Down | Keycode::Kp8 | Keycode::Kp2 => {
             if let Some(pad) = input.pad.as_mut() {
-                pad.x = 0
+                pad.y = 0;
+                if pad.x == 0 {
+                    input.pad = None;
+                }
             }
         }
-        Keycode::Up => {
-            if let Some(pad) = input.pad.as_mut() {
-                pad.y = 0
-            }
-        }
-        Keycode::Down => {
-            if let Some(pad) = input.pad.as_mut() {
-                pad.y = 0
+        Keycode::Kp5 => {
+            if matches!(input.pad, Some(Pad { x: 0, y: 0 })) {
+                input.pad = None
             }
         }
         _ => {}
@@ -110,27 +111,38 @@ fn handle_key_up(keycode: Keycode, input: &mut firefly_device::InputState) {
 /// A key on the keyboard is pressed, update the input.
 fn handle_key_down(keycode: Keycode, input: &mut firefly_device::InputState) {
     match keycode {
+        // `Z` or `Enter`: (A)
         Keycode::Z | Keycode::Return => input.buttons[0] = true,
+        // `X`: (B)
         Keycode::X => input.buttons[1] = true,
+        // `A`: (X)
         Keycode::A => input.buttons[2] = true,
+        // `S`: (Y)
         Keycode::S => input.buttons[3] = true,
-        Keycode::Tab => input.buttons[4] = true,
-        Keycode::Left => match input.pad.as_mut() {
+        // `Tab`, `Backspace`: (menu)
+        Keycode::Tab | Keycode::Backspace => input.buttons[4] = true,
+        // `←`, `4`: touchpad left
+        Keycode::Left | Keycode::Kp4 => match input.pad.as_mut() {
             Some(pad) => pad.x = -1000,
             None => input.pad = Some(Pad { x: -1000, y: 0 }),
         },
-        Keycode::Right => match input.pad.as_mut() {
+        // `→`, `6`: touchpad right
+        Keycode::Right | Keycode::Kp6 => match input.pad.as_mut() {
             Some(pad) => pad.x = 1000,
             None => input.pad = Some(Pad { x: 1000, y: 0 }),
         },
-        Keycode::Up => match input.pad.as_mut() {
+        // `↑`, `8`: touchpad up
+        Keycode::Up | Keycode::Kp8 => match input.pad.as_mut() {
             Some(pad) => pad.y = 1000,
             None => input.pad = Some(Pad { x: 0, y: 1000 }),
         },
-        Keycode::Down => match input.pad.as_mut() {
+        // `↓`, `2`: touchpad down
+        Keycode::Down | Keycode::Kp2 => match input.pad.as_mut() {
             Some(pad) => pad.y = -1000,
             None => input.pad = Some(Pad { x: 0, y: -1000 }),
         },
+        // `5`: touchpad middle
+        Keycode::Kp5 => input.pad = Some(Pad { x: 0, y: 0 }),
         _ => {}
     }
 }
