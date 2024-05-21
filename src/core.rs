@@ -48,34 +48,14 @@ fn run_app(window: &mut minifb::Window, mut config: Config) -> Result<Option<Con
         }
         runtime.display().update(window)?;
         for key in window.get_keys() {
-            match key {
-                Key::Escape => {
-                    return Ok(None);
-                }
-                _ => {
-                    handle_key_down(key, &mut input);
-                }
+            if key == Key::Escape {
+                return Ok(None);
             }
+            handle_key_down(key, &mut input);
         }
         for key in window.get_keys_released() {
             handle_key_up(key, &mut input);
         }
-
-        // for event in window.events() {
-        //     match event {
-        //         SimulatorEvent::KeyDown { keycode, .. } => {
-        //             handle_key_down(keycode, &mut input);
-        //         }
-        //         SimulatorEvent::KeyUp { keycode, .. } => {
-        //             handle_key_up(keycode, &mut input);
-        //         }
-        //         // ESC is pressed. Exit the emulator.
-        //         SimulatorEvent::Quit => {
-        //             return Ok(None);
-        //         }
-        //         _ => {}
-        //     }
-        // }
         runtime.device_mut().update_input(input.clone());
     }
 }
