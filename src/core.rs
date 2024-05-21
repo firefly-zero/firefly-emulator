@@ -5,7 +5,10 @@ use embedded_graphics::pixelcolor::Rgb888;
 use embedded_graphics::prelude::*;
 use firefly_device::{DeviceImpl, Pad};
 use firefly_runtime::*;
+use minifb::Key;
+use std::cell::RefCell;
 use std::path::PathBuf;
+use std::rc::Rc;
 
 type Config = RuntimeConfig<Display, Rgb888>;
 
@@ -47,7 +50,21 @@ fn run_app(window: &mut minifb::Window, mut config: Config) -> Result<Option<Con
             let config = runtime.into_config();
             return Ok(Some(config));
         }
-        runtime.display().update(window);
+        runtime.display().update(window)?;
+        for key in window.get_keys() {
+            match key {
+                Key::Escape => {
+                    return Ok(None);
+                }
+                _ => {
+                    handle_key_down(key, &mut input);
+                }
+            }
+        }
+        for key in window.get_keys_released() {
+            handle_key_up(key, &mut input);
+        }
+
         // for event in window.events() {
         //     match event {
         //         SimulatorEvent::KeyDown { keycode, .. } => {
@@ -67,77 +84,77 @@ fn run_app(window: &mut minifb::Window, mut config: Config) -> Result<Option<Con
     }
 }
 
-// /// A key on the keyboard is released, update the input.
-// fn handle_key_up(keycode: Keycode, input: &mut firefly_device::InputState) {
-//     match keycode {
-//         Keycode::Z | Keycode::Return => input.buttons[0] = false,
-//         Keycode::X => input.buttons[1] = false,
-//         Keycode::A => input.buttons[2] = false,
-//         Keycode::S => input.buttons[3] = false,
-//         Keycode::Tab | Keycode::Backspace => input.buttons[4] = false,
-//         Keycode::Left | Keycode::Right | Keycode::Kp4 | Keycode::Kp6 => {
-//             if let Some(pad) = input.pad.as_mut() {
-//                 pad.x = 0;
-//                 if pad.y == 0 {
-//                     input.pad = None;
-//                 }
-//             }
-//         }
-//         Keycode::Up | Keycode::Down | Keycode::Kp8 | Keycode::Kp2 => {
-//             if let Some(pad) = input.pad.as_mut() {
-//                 pad.y = 0;
-//                 if pad.x == 0 {
-//                     input.pad = None;
-//                 }
-//             }
-//         }
-//         Keycode::Kp5 => {
-//             if matches!(input.pad, Some(Pad { x: 0, y: 0 })) {
-//                 input.pad = None
-//             }
-//         }
-//         _ => {}
-//     }
-// }
+/// A key on the keyboard is released, update the input.
+fn handle_key_up(key: Key, input: &mut firefly_device::InputState) {
+    match key {
+        Key::Z | Key::Enter => input.buttons[0] = false,
+        Key::X => input.buttons[1] = false,
+        Key::A => input.buttons[2] = false,
+        Key::S => input.buttons[3] = false,
+        Key::Tab | Key::Backspace => input.buttons[4] = false,
+        Key::Left | Key::Right | Key::Key4 | Key::Key6 => {
+            if let Some(pad) = input.pad.as_mut() {
+                pad.x = 0;
+                if pad.y == 0 {
+                    input.pad = None;
+                }
+            }
+        }
+        Key::Up | Key::Down | Key::Key8 | Key::Key2 => {
+            if let Some(pad) = input.pad.as_mut() {
+                pad.y = 0;
+                if pad.x == 0 {
+                    input.pad = None;
+                }
+            }
+        }
+        Key::Key5 => {
+            if matches!(input.pad, Some(Pad { x: 0, y: 0 })) {
+                input.pad = None
+            }
+        }
+        _ => {}
+    }
+}
 
-// /// A key on the keyboard is pressed, update the input.
-// fn handle_key_down(keycode: Keycode, input: &mut firefly_device::InputState) {
-//     match keycode {
-//         // `Z` or `Enter`: (A)
-//         Keycode::Z | Keycode::Return => input.buttons[0] = true,
-//         // `X`: (B)
-//         Keycode::X => input.buttons[1] = true,
-//         // `A`: (X)
-//         Keycode::A => input.buttons[2] = true,
-//         // `S`: (Y)
-//         Keycode::S => input.buttons[3] = true,
-//         // `Tab`, `Backspace`: (menu)
-//         Keycode::Tab | Keycode::Backspace => input.buttons[4] = true,
-//         // `←`, `4`: touchpad left
-//         Keycode::Left | Keycode::Kp4 => match input.pad.as_mut() {
-//             Some(pad) => pad.x = -1000,
-//             None => input.pad = Some(Pad { x: -1000, y: 0 }),
-//         },
-//         // `→`, `6`: touchpad right
-//         Keycode::Right | Keycode::Kp6 => match input.pad.as_mut() {
-//             Some(pad) => pad.x = 1000,
-//             None => input.pad = Some(Pad { x: 1000, y: 0 }),
-//         },
-//         // `↑`, `8`: touchpad up
-//         Keycode::Up | Keycode::Kp8 => match input.pad.as_mut() {
-//             Some(pad) => pad.y = 1000,
-//             None => input.pad = Some(Pad { x: 0, y: 1000 }),
-//         },
-//         // `↓`, `2`: touchpad down
-//         Keycode::Down | Keycode::Kp2 => match input.pad.as_mut() {
-//             Some(pad) => pad.y = -1000,
-//             None => input.pad = Some(Pad { x: 0, y: -1000 }),
-//         },
-//         // `5`: touchpad middle
-//         Keycode::Kp5 => input.pad = Some(Pad { x: 0, y: 0 }),
-//         _ => {}
-//     }
-// }
+/// A key on the keyboard is pressed, update the input.
+fn handle_key_down(keycode: Key, input: &mut firefly_device::InputState) {
+    match keycode {
+        // `Z` or `Enter`: (A)
+        Key::Z | Key::Enter => input.buttons[0] = true,
+        // `X`: (B)
+        Key::X => input.buttons[1] = true,
+        // `A`: (X)
+        Key::A => input.buttons[2] = true,
+        // `S`: (Y)
+        Key::S => input.buttons[3] = true,
+        // `Tab`, `Backspace`: (menu)
+        Key::Tab | Key::Backspace => input.buttons[4] = true,
+        // `←`, `4`: touchpad left
+        Key::Left | Key::Key4 => match input.pad.as_mut() {
+            Some(pad) => pad.x = -1000,
+            None => input.pad = Some(Pad { x: -1000, y: 0 }),
+        },
+        // `→`, `6`: touchpad right
+        Key::Right | Key::Key6 => match input.pad.as_mut() {
+            Some(pad) => pad.x = 1000,
+            None => input.pad = Some(Pad { x: 1000, y: 0 }),
+        },
+        // `↑`, `8`: touchpad up
+        Key::Up | Key::Key8 => match input.pad.as_mut() {
+            Some(pad) => pad.y = 1000,
+            None => input.pad = Some(Pad { x: 0, y: 1000 }),
+        },
+        // `↓`, `2`: touchpad down
+        Key::Down | Key::Key2 => match input.pad.as_mut() {
+            Some(pad) => pad.y = -1000,
+            None => input.pad = Some(Pad { x: 0, y: -1000 }),
+        },
+        // `5`: touchpad middle
+        Key::Key5 => input.pad = Some(Pad { x: 0, y: 0 }),
+        _ => {}
+    }
+}
 
 /// Get path to the virtual file system.
 fn get_vfs_path() -> PathBuf {
