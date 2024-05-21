@@ -47,6 +47,9 @@ fn run_app(window: &mut minifb::Window, mut config: Config) -> Result<Option<Con
             return Ok(Some(config));
         }
         runtime.display().update(window)?;
+        if !window.is_open() {
+            return Ok(None);
+        }
         for key in window.get_keys() {
             if key == Key::Escape {
                 return Ok(None);
