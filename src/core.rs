@@ -2,26 +2,22 @@ use crate::display::Display;
 use crate::error::Error;
 use directories::ProjectDirs;
 use embedded_graphics::pixelcolor::Rgb888;
-use embedded_graphics::prelude::*;
 use firefly_device::{DeviceImpl, Pad};
 use firefly_runtime::*;
 use minifb::Key;
-use std::cell::RefCell;
 use std::path::PathBuf;
-use std::rc::Rc;
 
 type Config = RuntimeConfig<Display, Rgb888>;
 
 pub fn run_emulator() -> Result<(), Error> {
     let vfs_path = get_vfs_path();
     let device = DeviceImpl::new(vfs_path);
-    let mut buffer: Vec<u32> = vec![0; WIDTH * HEIGHT];
     let opts = minifb::WindowOptions {
         scale: minifb::Scale::X4,
         ..Default::default()
     };
     let mut window = minifb::Window::new("Firefly emulator", WIDTH, HEIGHT, opts)?;
-    let mut display = Display::new();
+    let display = Display::new();
     let mut config = RuntimeConfig {
         id: None,
         device,
