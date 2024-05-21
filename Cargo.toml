@@ -13,3 +13,4 @@ embedded-graphics = "0.8.1"
 # For showing frame buffer on the screen
 embedded-graphics-simulator = "0.6.0"
 directories = "5.0.1"
+minifb = "0.27.0"
