@@ -10,7 +10,7 @@ firefly-device = { path = "../firefly-device" }
 firefly-runtime = { path = "../firefly-runtime" }
 # For drawing custom menus
 embedded-graphics = "0.8.1"
-# For showing frame buffer on the screen
-embedded-graphics-simulator = "0.6.0"
+# Fo finding the VFS location
 directories = "5.0.1"
+# For showing frame buffer on the screen
 minifb = "0.27.0"
