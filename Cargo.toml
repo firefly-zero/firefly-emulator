@@ -4,13 +4,15 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-# For accessing peripherals
-firefly-device = { path = "../firefly-device" }
-# For running the app
-firefly-runtime = { path = "../firefly-runtime" }
-# For drawing custom menus
-embedded-graphics = "0.8.1"
-# Fo finding the VFS location
+# parsing CLI flags
+clap = { version = "4.5.4", features = ["derive"] }
+# finding the VFS location
 directories = "5.0.1"
-# For showing frame buffer on the screen
+# accessing peripherals
+firefly-device = { path = "../firefly-device" }
+# running the app
+firefly-runtime = { path = "../firefly-runtime" }
+# drawing custom menus
+embedded-graphics = "0.8.1"
+# showing frame buffer on the screen
 minifb = "0.27.0"

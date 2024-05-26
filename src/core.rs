@@ -1,5 +1,6 @@
 use crate::display::Display;
 use crate::error::Error;
+use clap::Parser;
 use directories::ProjectDirs;
 use embedded_graphics::pixelcolor::Rgb888;
 use firefly_device::{DeviceImpl, Pad};
@@ -9,13 +10,51 @@ use std::path::PathBuf;
 
 type Config = RuntimeConfig<Display, Rgb888>;
 
-pub fn run_emulator() -> Result<(), Error> {
+#[derive(Debug, Parser)]
+pub struct CliArgs {
+    /// The scale for the window and each pixel.
+    ///
+    /// Must be a power of 2: 1, 2, 4, 8, 16, or 32.
+    #[arg(long, default_value_t = 4)]
+    pub scale: u8,
+
+    /// Run the emulator in borderless mode and scale to fit the screen.
+    ///
+    /// If specified, "--scale" has no effect.
+    #[arg(long, default_value_t = false)]
+    pub fullscreen: bool,
+}
+
+impl CliArgs {
+    fn options(&self) -> Result<minifb::WindowOptions, Error> {
+        let scale = if self.scale == 4 && self.fullscreen {
+            minifb::Scale::FitScreen
+        } else {
+            match self.scale {
+                1 => minifb::Scale::X1,
+                2 => minifb::Scale::X2,
+                4 => minifb::Scale::X4,
+                8 => minifb::Scale::X8,
+                16 => minifb::Scale::X16,
+                32 => minifb::Scale::X32,
+                _ => return Err(Error::Cli("invalid scale".into())),
+            }
+        };
+        let opts = minifb::WindowOptions {
+            borderless: self.fullscreen,
+            scale,
+            scale_mode: minifb::ScaleMode::Stretch,
+            resize: true,
+            ..Default::default()
+        };
+        Ok(opts)
+    }
+}
+
+pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
     let vfs_path = get_vfs_path();
     let device = DeviceImpl::new(vfs_path);
-    let opts = minifb::WindowOptions {
-        scale: minifb::Scale::X4,
-        ..Default::default()
-    };
+    let opts = args.options()?;
     let mut window = minifb::Window::new("Firefly emulator", WIDTH, HEIGHT, opts)?;
     let display = Display::new();
     let mut config = RuntimeConfig {

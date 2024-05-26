@@ -3,6 +3,7 @@ use core::fmt::Display;
 pub enum Error {
     Runtime(firefly_runtime::Error),
     MiniFB(minifb::Error),
+    Cli(String),
 }
 
 impl From<firefly_runtime::Error> for Error {
@@ -22,6 +23,7 @@ impl Display for Error {
         match self {
             Error::Runtime(err) => write!(f, "runtime error: {err}"),
             Error::MiniFB(err) => write!(f, "GUI error: {err}"),
+            Error::Cli(err) => write!(f, "CLI error: {err}"),
         }
     }
 }
