@@ -3,10 +3,11 @@ use crate::error::Error;
 use clap::Parser;
 use directories::ProjectDirs;
 use embedded_graphics::pixelcolor::Rgb888;
-use firefly_device::{DeviceImpl, Pad};
+use firefly_device::{DeviceImpl, InputState, Pad};
 use firefly_runtime::*;
 use minifb::Key;
 use std::path::PathBuf;
+use std::str::FromStr;
 
 type Config = RuntimeConfig<Display, Rgb888>;
 
@@ -23,6 +24,14 @@ pub struct CliArgs {
     /// If specified, "--scale" has no effect.
     #[arg(long, default_value_t = false)]
     pub fullscreen: bool,
+
+    /// The author ID of the app to run.
+    #[arg(long, default_value = None)]
+    pub author_id: Option<String>,
+
+    /// The app ID of the app to run.
+    #[arg(long, default_value = None)]
+    pub app_id: Option<String>,
 }
 
 impl CliArgs {
@@ -49,6 +58,17 @@ impl CliArgs {
         };
         Ok(opts)
     }
+
+    fn id(&self) -> Option<FullID> {
+        match (&self.author_id, &self.app_id) {
+            (Some(author_id), Some(app_id)) => {
+                let author_id = heapless::String::from_str(author_id).unwrap();
+                let app_id = heapless::String::from_str(app_id).unwrap();
+                Some(FullID::new(author_id, app_id))
+            }
+            (_, _) => None,
+        }
+    }
 }
 
 pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
@@ -58,7 +78,7 @@ pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
     let mut window = minifb::Window::new("Firefly emulator", WIDTH, HEIGHT, opts)?;
     let display = Display::new();
     let mut config = RuntimeConfig {
-        id: None,
+        id: args.id(),
         device,
         display,
     };
@@ -72,7 +92,7 @@ pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
 }
 
 fn run_app(window: &mut minifb::Window, mut config: Config) -> Result<Option<Config>, Error> {
-    let mut input = firefly_device::InputState::default();
+    let mut input = InputState::default();
     // Reset input in case it is preserved from the previous runtime.
     config.device.update_input(input.clone());
 
@@ -103,7 +123,7 @@ fn run_app(window: &mut minifb::Window, mut config: Config) -> Result<Option<Con
 }
 
 /// A key on the keyboard is released, update the input.
-fn handle_key_up(key: Key, input: &mut firefly_device::InputState) {
+fn handle_key_up(key: Key, input: &mut InputState) {
     match key {
         Key::Z | Key::Enter => input.buttons[0] = false,
         Key::X => input.buttons[1] = false,
@@ -136,7 +156,7 @@ fn handle_key_up(key: Key, input: &mut firefly_device::InputState) {
 }
 
 /// A key on the keyboard is pressed, update the input.
-fn handle_key_down(keycode: Key, input: &mut firefly_device::InputState) {
+fn handle_key_down(keycode: Key, input: &mut InputState) {
     match keycode {
         // `Z` or `Enter`: (A)
         Key::Z | Key::Enter => input.buttons[0] = true,

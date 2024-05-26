@@ -16,3 +16,4 @@ firefly-runtime = { path = "../firefly-runtime" }
 embedded-graphics = "0.8.1"
 # showing frame buffer on the screen
 minifb = "0.27.0"
+heapless = "0.8.0"
