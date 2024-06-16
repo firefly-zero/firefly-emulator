@@ -92,6 +92,13 @@ pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
 }
 
 fn run_app(window: &mut minifb::Window, mut config: Config) -> Result<Option<Config>, Error> {
+    let title = if let Some(id) = &config.id {
+        format!("Firefly Emulator: {}.{}", id.author(), id.app())
+    } else {
+        "Firefly Emulator".to_string()
+    };
+    window.set_title(&title);
+
     let mut input = InputState::default();
     // Reset input in case it is preserved from the previous runtime.
     config.device.update_input(input.clone());
