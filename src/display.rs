@@ -37,6 +37,12 @@ impl DrawTarget for Display {
         I: IntoIterator<Item = embedded_graphics::prelude::Pixel<Self::Color>>,
     {
         for Pixel(point, color) in pixels {
+            if point.x >= WIDTH as i32 || point.y >= HEIGHT as i32 {
+                continue;
+            }
+            if point.x < 0 || point.y < 0 {
+                continue;
+            }
             let index = (point.y as usize) * WIDTH + (point.x as usize);
             self.buffer[index] = color.into_storage();
         }
