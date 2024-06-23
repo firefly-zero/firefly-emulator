@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=firefly-emulator
+Exec=firefly-emulator
+Icon=logo
+Type=Application
+Categories=Utility
+Terminal=true
