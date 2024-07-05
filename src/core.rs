@@ -132,11 +132,16 @@ fn run_app(window: &mut minifb::Window, mut config: Config) -> Result<Option<Con
 /// A key on the keyboard is released, update the input.
 fn handle_key_up(key: Key, input: &mut InputState) {
     match key {
-        Key::Z | Key::Enter => input.buttons[0] = false,
-        Key::X => input.buttons[1] = false,
+        // A
+        Key::Z | Key::Enter | Key::Space => input.buttons[0] = false,
+        // B
+        Key::X | Key::B | Key::Backspace => input.buttons[1] = false,
+        // X
         Key::A => input.buttons[2] = false,
-        Key::S => input.buttons[3] = false,
-        Key::Tab | Key::Backspace => input.buttons[4] = false,
+        // Y
+        Key::S | Key::Y => input.buttons[3] = false,
+        // menu
+        Key::Tab => input.buttons[4] = false,
         Key::Left | Key::Right | Key::Key4 | Key::Key6 => {
             if let Some(pad) = input.pad.as_mut() {
                 pad.x = 0;
@@ -165,16 +170,16 @@ fn handle_key_up(key: Key, input: &mut InputState) {
 /// A key on the keyboard is pressed, update the input.
 fn handle_key_down(keycode: Key, input: &mut InputState) {
     match keycode {
-        // `Z` or `Enter`: (A)
-        Key::Z | Key::Enter => input.buttons[0] = true,
-        // `X`: (B)
-        Key::X => input.buttons[1] = true,
+        // `Z`, `Enter`, or `Space`: (A)
+        Key::Z | Key::Enter | Key::Space => input.buttons[0] = true,
+        // `X` or `B`: (B)
+        Key::X | Key::B | Key::Backspace => input.buttons[1] = true,
         // `A`: (X)
         Key::A => input.buttons[2] = true,
-        // `S`: (Y)
-        Key::S => input.buttons[3] = true,
-        // `Tab`, `Backspace`: (menu)
-        Key::Tab | Key::Backspace => input.buttons[4] = true,
+        // `S` or `Y`: (Y)
+        Key::S | Key::Y => input.buttons[3] = true,
+        // `Tab`: (menu)
+        Key::Tab => input.buttons[4] = true,
         // `←`, `4`: touchpad left
         Key::Left | Key::Key4 => match input.pad.as_mut() {
             Some(pad) => pad.x = -1000,
