@@ -81,6 +81,7 @@ pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
         id: args.id(),
         device,
         display,
+        net_handler: NetHandler::None,
     };
     loop {
         config = match run_app(&mut window, config)? {
