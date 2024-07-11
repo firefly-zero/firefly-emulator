@@ -3,7 +3,7 @@ use core::fmt::Display;
 pub enum Error {
     Runtime(firefly_runtime::Error),
     MiniFB(minifb::Error),
-    Cli(String),
+    Cli(&'static str),
 }
 
 impl From<firefly_runtime::Error> for Error {
@@ -15,6 +15,12 @@ impl From<firefly_runtime::Error> for Error {
 impl From<minifb::Error> for Error {
     fn from(value: minifb::Error) -> Self {
         Self::MiniFB(value)
+    }
+}
+
+impl From<&'static str> for Error {
+    fn from(value: &'static str) -> Self {
+        Self::Cli(value)
     }
 }
 

@@ -7,7 +7,6 @@ use firefly_device::{DeviceImpl, InputState, Pad};
 use firefly_runtime::*;
 use minifb::Key;
 use std::path::PathBuf;
-use std::str::FromStr;
 
 type Config = RuntimeConfig<Display, Rgb888>;
 
@@ -25,13 +24,9 @@ pub struct CliArgs {
     #[arg(long, default_value_t = false)]
     pub fullscreen: bool,
 
-    /// The author ID of the app to run.
+    /// The full ID of the app to run.
     #[arg(long, default_value = None)]
-    pub author_id: Option<String>,
-
-    /// The app ID of the app to run.
-    #[arg(long, default_value = None)]
-    pub app_id: Option<String>,
+    pub id: Option<String>,
 }
 
 impl CliArgs {
@@ -46,7 +41,7 @@ impl CliArgs {
                 8 => minifb::Scale::X8,
                 16 => minifb::Scale::X16,
                 32 => minifb::Scale::X32,
-                _ => return Err(Error::Cli("invalid scale".into())),
+                _ => return Err("invalid scale".into()),
             }
         };
         let opts = minifb::WindowOptions {
@@ -58,17 +53,6 @@ impl CliArgs {
         };
         Ok(opts)
     }
-
-    fn id(&self) -> Option<FullID> {
-        match (&self.author_id, &self.app_id) {
-            (Some(author_id), Some(app_id)) => {
-                let author_id = heapless::String::from_str(author_id).unwrap();
-                let app_id = heapless::String::from_str(app_id).unwrap();
-                Some(FullID::new(author_id, app_id))
-            }
-            (_, _) => None,
-        }
-    }
 }
 
 pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
@@ -77,8 +61,12 @@ pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
     let opts = args.options()?;
     let mut window = minifb::Window::new("Firefly emulator", WIDTH, HEIGHT, opts)?;
     let display = Display::new();
+    let id = match &args.id {
+        Some(full_id) => Some(parse_id(full_id)?),
+        None => None,
+    };
     let mut config = RuntimeConfig {
-        id: args.id(),
+        id,
         device,
         display,
         net_handler: NetHandler::None,
@@ -90,6 +78,20 @@ pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
         };
     }
     Ok(())
+}
+
+fn parse_id(full_id: &str) -> Result<FullID, Error> {
+    let Some(dot) = full_id.find('.') else {
+        return Err("the full app ID must contain a dot".into());
+    };
+    let (author_id, app_id) = full_id.split_at(dot);
+    let Ok(author_id) = heapless::String::try_from(author_id) else {
+        return Err("author ID is too long".into());
+    };
+    let Ok(app_id) = heapless::String::try_from(app_id) else {
+        return Err("app ID is too long".into());
+    };
+    Ok(FullID::new(author_id, app_id))
 }
 
 fn run_app(window: &mut minifb::Window, mut config: Config) -> Result<Option<Config>, Error> {
