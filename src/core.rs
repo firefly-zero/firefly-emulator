@@ -175,7 +175,7 @@ fn handle_key_down(keycode: Key, input: &mut InputState) {
     match keycode {
         // `Z`, `Enter`, or `Space`: (A)
         Key::Z | Key::Enter | Key::Space => input.buttons |= 0b1,
-        // `X` or `B`: (B)
+        // `X`, `B`, or `Backspace`: (B)
         Key::X | Key::B | Key::Backspace => input.buttons |= 0b10,
         // `A`: (X)
         Key::A => input.buttons |= 0b100,
