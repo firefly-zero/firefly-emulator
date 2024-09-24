@@ -3,7 +3,7 @@ use crate::error::Error;
 use clap::Parser;
 use directories::ProjectDirs;
 use embedded_graphics::pixelcolor::Rgb888;
-use firefly_device::{DeviceImpl, InputState, Pad};
+use firefly_device::{DeviceConfig, DeviceImpl, InputState, Pad};
 use firefly_runtime::*;
 use minifb::Key;
 use std::path::PathBuf;
@@ -57,7 +57,11 @@ impl CliArgs {
 
 pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
     let vfs_path = get_vfs_path();
-    let device = DeviceImpl::new(vfs_path);
+    let config = DeviceConfig {
+        root: vfs_path,
+        ..Default::default()
+    };
+    let device = DeviceImpl::new(config);
     let opts = args.options()?;
     let mut window = minifb::Window::new("Firefly emulator", WIDTH, HEIGHT, opts)?;
     let display = Display::new();
