@@ -41,6 +41,10 @@ pub struct CliArgs {
     /// The UDP IP addresses where to send netplay advertisements.
     #[arg(long, default_value = None)]
     pub peers: Option<Vec<IpAddr>>,
+
+    /// If provided, the path where to save the audio output (as a WAV file).
+    #[arg(long, default_value = None)]
+    pub wav: Option<PathBuf>,
 }
 
 impl CliArgs {
@@ -85,6 +89,9 @@ pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
         if let Some(peers) = &args.peers {
             config.peers = peers.clone();
         }
+        if let Some(wav) = &args.wav {
+            config.wav = Some(wav.clone());
+        }
         DeviceImpl::new(config)
     };
 
@@ -117,7 +124,7 @@ fn parse_id(full_id: &str) -> Result<FullID, Error> {
     let Ok(author_id) = heapless::String::try_from(author_id) else {
         return Err("author ID is too long".into());
     };
-    let Ok(app_id) = heapless::String::try_from(app_id) else {
+    let Ok(app_id) = heapless::String::try_from(&app_id[1..]) else {
         return Err("app ID is too long".into());
     };
     Ok(FullID::new(author_id, app_id))
