@@ -6,7 +6,7 @@ use embedded_graphics::pixelcolor::Rgb888;
 use firefly_device::{DeviceConfig, DeviceImpl, InputState, Pad};
 use firefly_runtime::*;
 use minifb::Key;
-use std::path::PathBuf;
+use std::{net::IpAddr, path::PathBuf};
 
 type Config = RuntimeConfig<Display, Rgb888>;
 
@@ -25,8 +25,22 @@ pub struct CliArgs {
     pub fullscreen: bool,
 
     /// The full ID of the app to run.
+    ///
+    /// If not specified, will start launcher (if installed) or the latest installed app.
     #[arg(long, default_value = None)]
     pub id: Option<String>,
+
+    /// The TCP IP address where to listen for serial events.
+    #[arg(long, default_value = None)]
+    pub tcp_ip: Option<IpAddr>,
+
+    /// The UDP IP address where to listen for netplay events.
+    #[arg(long, default_value = None)]
+    pub udp_ip: Option<IpAddr>,
+
+    /// The UDP IP addresses where to send netplay advertisements.
+    #[arg(long, default_value = None)]
+    pub peers: Option<Vec<IpAddr>>,
 }
 
 impl CliArgs {
@@ -56,15 +70,26 @@ impl CliArgs {
 }
 
 pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
-    let vfs_path = get_vfs_path();
-    let config = DeviceConfig {
-        root: vfs_path,
-        ..Default::default()
+    let device = {
+        let vfs_path = get_vfs_path();
+        let mut config = DeviceConfig {
+            root: vfs_path,
+            ..Default::default()
+        };
+        if let Some(ip) = args.tcp_ip {
+            config.tcp_ip = ip;
+        }
+        if let Some(ip) = args.udp_ip {
+            config.udp_ip = ip;
+        }
+        if let Some(peers) = &args.peers {
+            config.peers = peers.clone();
+        }
+        DeviceImpl::new(config)
     };
-    let device = DeviceImpl::new(config);
+
     let opts = args.options()?;
     let mut window = minifb::Window::new("Firefly emulator", WIDTH, HEIGHT, opts)?;
-    let display = Display::new();
     let id = match &args.id {
         Some(full_id) => Some(parse_id(full_id)?),
         None => None,
@@ -72,7 +97,7 @@ pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
     let mut config = RuntimeConfig {
         id,
         device,
-        display,
+        display: Display::new(),
         net_handler: NetHandler::None,
     };
     loop {
