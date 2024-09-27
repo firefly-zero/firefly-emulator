@@ -7,6 +7,7 @@ use std::convert::Infallible;
 const BUFFER_SIZE: usize = WIDTH * HEIGHT;
 
 pub(crate) struct Display {
+    dirty: bool,
     buffer: [u32; BUFFER_SIZE],
 }
 
@@ -14,11 +15,18 @@ impl Display {
     pub fn new() -> Self {
         Self {
             buffer: [0u32; BUFFER_SIZE],
+            dirty: true,
         }
     }
 
-    pub fn update(&self, window: &mut minifb::Window) -> Result<(), minifb::Error> {
-        window.update_with_buffer(&self.buffer, WIDTH, HEIGHT)
+    pub fn update(&mut self, window: &mut minifb::Window) -> Result<(), minifb::Error> {
+        if self.dirty {
+            self.dirty = false;
+            window.update_with_buffer(&self.buffer, WIDTH, HEIGHT)
+        } else {
+            window.update();
+            Ok(())
+        }
     }
 }
 
@@ -36,6 +44,7 @@ impl DrawTarget for Display {
     where
         I: IntoIterator<Item = embedded_graphics::prelude::Pixel<Self::Color>>,
     {
+        self.dirty = true;
         for Pixel(point, color) in pixels {
             if point.x >= WIDTH as i32 || point.y >= HEIGHT as i32 {
                 continue;
