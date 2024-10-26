@@ -247,8 +247,19 @@ fn handle_key_down(keycode: Key, input: &mut InputState) {
 
 /// Get path to the virtual file system.
 fn get_vfs_path() -> PathBuf {
+    let current_dir = std::env::current_dir().ok();
+    if let Some(current_dir) = &current_dir {
+        let path = current_dir.join(".firefly");
+        if path.is_dir() {
+            return path;
+        }
+    }
     match ProjectDirs::from("com", "firefly", "firefly") {
         Some(dirs) => dirs.data_dir().to_owned(),
-        None => PathBuf::from(".firefly"),
+        None => match current_dir {
+            // Make the path absolute if possible
+            Some(current_dir) => current_dir.join(".firefly"),
+            None => PathBuf::from(".firefly"),
+        },
     }
 }
