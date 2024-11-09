@@ -6,7 +6,8 @@ use embedded_graphics::pixelcolor::Rgb888;
 use firefly_device::{DeviceConfig, DeviceImpl, InputState, Pad};
 use firefly_runtime::*;
 use minifb::Key;
-use std::{net::IpAddr, path::PathBuf};
+use std::net::IpAddr;
+use std::path::PathBuf;
 
 type Config = RuntimeConfig<Display, Rgb888>;
 
