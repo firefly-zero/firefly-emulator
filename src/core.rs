@@ -3,7 +3,7 @@ use crate::error::Error;
 use clap::Parser;
 use directories::ProjectDirs;
 use embedded_graphics::pixelcolor::Rgb888;
-use firefly_device::{DeviceConfig, DeviceImpl, InputState, Pad};
+use firefly_hal::{DeviceConfig, DeviceImpl, InputState, Pad};
 use firefly_runtime::*;
 use minifb::Key;
 use std::net::IpAddr;
