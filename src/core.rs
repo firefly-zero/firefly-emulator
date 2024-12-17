@@ -158,7 +158,7 @@ fn run_app(window: &mut minifb::Window, mut config: Config) -> Result<Option<Con
         let exit = runtime.update()?;
         // Exit requested. Finalize runtime and get ownership of the device back.
         if exit {
-            let config = runtime.into_config();
+            let config = runtime.finalize()?;
             return Ok(Some(config));
         }
         runtime.display().update(window)?;
