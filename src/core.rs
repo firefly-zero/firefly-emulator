@@ -43,6 +43,12 @@ pub struct CliArgs {
     #[arg(long, default_value = None)]
     pub peers: Option<Vec<IpAddr>>,
 
+    /// Path to the virtual FS to use.
+    ///
+    /// By default, the global one (~/.local/share/firefly) is used.
+    #[arg(long, default_value = None)]
+    pub vfs: Option<PathBuf>,
+
     /// If provided, the path where to save the audio output (as a WAV file).
     #[arg(long, default_value = None)]
     pub wav: Option<PathBuf>,
@@ -76,7 +82,10 @@ impl CliArgs {
 
 pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
     let device = {
-        let vfs_path = get_vfs_path();
+        let vfs_path = match &args.vfs {
+            Some(vfs) => vfs.clone(),
+            None => get_vfs_path(),
+        };
         let mut config = DeviceConfig {
             root: vfs_path,
             ..Default::default()
