@@ -52,6 +52,13 @@ pub struct CliArgs {
     /// If provided, the path where to save the audio output (as a WAV file).
     #[arg(long, default_value = None)]
     pub wav: Option<PathBuf>,
+
+    /// Disable reading input from keyboard.
+    ///
+    /// Useful if you have troubles with keyboard (like a stuck key)
+    /// and just want to use gamepad as input.
+    #[arg(long, default_value_t = false)]
+    pub no_keyboard: bool,
 }
 
 impl CliArgs {
@@ -118,7 +125,7 @@ pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
         net_handler: NetHandler::None,
     };
     loop {
-        config = match run_app(&mut window, config)? {
+        config = match run_app(&mut window, config, !args.no_keyboard)? {
             Some(config) => config,
             None => break,
         };
@@ -140,7 +147,11 @@ fn parse_id(full_id: &str) -> Result<FullID, Error> {
     Ok(FullID::new(author_id, app_id))
 }
 
-fn run_app(window: &mut minifb::Window, mut config: Config) -> Result<Option<Config>, Error> {
+fn run_app(
+    window: &mut minifb::Window,
+    mut config: Config,
+    keyboard: bool,
+) -> Result<Option<Config>, Error> {
     let title = if let Some(id) = &config.id {
         format!("Firefly Emulator: {}.{}", id.author(), id.app())
     } else {
@@ -165,14 +176,16 @@ fn run_app(window: &mut minifb::Window, mut config: Config) -> Result<Option<Con
         if !window.is_open() {
             return Ok(None);
         }
-        for key in window.get_keys() {
-            if key == Key::Escape {
-                return Ok(None);
+        if keyboard {
+            for key in window.get_keys() {
+                if key == Key::Escape {
+                    return Ok(None);
+                }
+                handle_key_down(key, &mut input);
             }
-            handle_key_down(key, &mut input);
-        }
-        for key in window.get_keys_released() {
-            handle_key_up(key, &mut input);
+            for key in window.get_keys_released() {
+                handle_key_up(key, &mut input);
+            }
         }
         runtime.device_mut().update_input(input.clone());
     }
