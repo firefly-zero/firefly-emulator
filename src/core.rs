@@ -115,7 +115,7 @@ pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
     let opts = args.options()?;
     let mut window = minifb::Window::new("Firefly emulator", WIDTH, HEIGHT, opts)?;
     let id = match &args.id {
-        Some(full_id) => Some(parse_id(full_id)?),
+        Some(full_id) => Some(FullID::try_from(full_id.as_str())?),
         None => None,
     };
     let mut config = RuntimeConfig {
@@ -131,20 +131,6 @@ pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
         };
     }
     Ok(())
-}
-
-fn parse_id(full_id: &str) -> Result<FullID, Error> {
-    let Some(dot) = full_id.find('.') else {
-        return Err("the full app ID must contain a dot".into());
-    };
-    let (author_id, app_id) = full_id.split_at(dot);
-    let Ok(author_id) = heapless::String::try_from(author_id) else {
-        return Err("author ID is too long".into());
-    };
-    let Ok(app_id) = heapless::String::try_from(&app_id[1..]) else {
-        return Err("app ID is too long".into());
-    };
-    Ok(FullID::new(author_id, app_id))
 }
 
 fn run_app(
