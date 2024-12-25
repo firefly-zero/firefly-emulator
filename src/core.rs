@@ -9,7 +9,7 @@ use minifb::Key;
 use std::net::IpAddr;
 use std::path::PathBuf;
 
-type Config = RuntimeConfig<Display, Rgb888>;
+type Config<'a> = RuntimeConfig<'a, Display, Rgb888>;
 
 #[derive(Debug, Parser)]
 pub struct CliArgs {
@@ -133,11 +133,11 @@ pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
     Ok(())
 }
 
-fn run_app(
+fn run_app<'a>(
     window: &mut minifb::Window,
-    mut config: Config,
+    mut config: Config<'a>,
     keyboard: bool,
-) -> Result<Option<Config>, Error> {
+) -> Result<Option<Config<'a>>, Error> {
     let title = if let Some(id) = &config.id {
         format!("Firefly Emulator: {}.{}", id.author(), id.app())
     } else {
