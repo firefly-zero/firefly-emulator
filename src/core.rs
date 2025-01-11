@@ -145,9 +145,8 @@ fn run_app<'a>(
     };
     window.set_title(&title);
 
-    let mut input = InputState::default();
     // Reset input in case it is preserved from the previous runtime.
-    config.device.update_input(input.clone());
+    config.device.update_input(InputState::default());
 
     let mut runtime = Runtime::new(config)?;
     runtime.start()?;
@@ -163,94 +162,49 @@ fn run_app<'a>(
             return Ok(None);
         }
         if keyboard {
-            for key in window.get_keys() {
-                if key == Key::Escape {
-                    return Ok(None);
-                }
-                handle_key_down(key, &mut input);
+            if window.is_key_down(Key::Escape) {
+                return Ok(None);
             }
-            for key in window.get_keys_released() {
-                handle_key_up(key, &mut input);
-            }
+            let input = read_keys(window);
+            runtime.device_mut().update_input(input);
         }
-        runtime.device_mut().update_input(input.clone());
     }
 }
 
-/// A key on the keyboard is released, update the input.
-fn handle_key_up(key: Key, input: &mut InputState) {
-    match key {
-        // A
-        Key::Z | Key::Enter | Key::Space => input.buttons &= 0b_1111_1110,
-        // B
-        Key::X | Key::B | Key::Backspace => input.buttons &= 0b_1111_1101,
-        // X
-        Key::A => input.buttons &= 0b_1111_1011,
-        // Y
-        Key::S | Key::Y => input.buttons &= 0b_1111_0111,
-        // menu
-        Key::Tab => input.buttons &= 0b_1110_1111,
-        Key::Left | Key::Right | Key::Key4 | Key::Key6 => {
-            if let Some(pad) = input.pad.as_mut() {
-                pad.x = 0;
-                if pad.y == 0 {
-                    input.pad = None;
-                }
-            }
-        }
-        Key::Up | Key::Down | Key::Key8 | Key::Key2 => {
-            if let Some(pad) = input.pad.as_mut() {
-                pad.y = 0;
-                if pad.x == 0 {
-                    input.pad = None;
-                }
-            }
-        }
-        Key::Key5 => {
-            if matches!(input.pad, Some(Pad { x: 0, y: 0 })) {
-                input.pad = None
-            }
-        }
-        _ => {}
-    }
-}
+fn read_keys(win: &minifb::Window) -> InputState {
+    let s = win.is_key_down(Key::Z) | win.is_key_down(Key::Enter) | win.is_key_down(Key::Space);
+    let e = win.is_key_down(Key::X) | win.is_key_down(Key::B) | win.is_key_down(Key::Backspace);
+    let w = win.is_key_down(Key::A);
+    let n = win.is_key_down(Key::S) | win.is_key_down(Key::Y);
+    let menu = win.is_key_down(Key::Tab);
+    let buttons =
+        u8::from(s) | u8::from(e) << 1 | u8::from(w) << 2 | u8::from(n) << 3 | u8::from(menu) << 4;
 
-/// A key on the keyboard is pressed, update the input.
-fn handle_key_down(keycode: Key, input: &mut InputState) {
-    match keycode {
-        // `Z`, `Enter`, or `Space`: (A)
-        Key::Z | Key::Enter | Key::Space => input.buttons |= 0b1,
-        // `X`, `B`, or `Backspace`: (B)
-        Key::X | Key::B | Key::Backspace => input.buttons |= 0b10,
-        // `A`: (X)
-        Key::A => input.buttons |= 0b100,
-        // `S` or `Y`: (Y)
-        Key::S | Key::Y => input.buttons |= 0b1000,
-        // `Tab`: (menu)
-        Key::Tab => input.buttons |= 0b10000,
-        // `←`, `4`: touchpad left
-        Key::Left | Key::Key4 => match input.pad.as_mut() {
-            Some(pad) => pad.x = -1000,
-            None => input.pad = Some(Pad { x: -1000, y: 0 }),
-        },
-        // `→`, `6`: touchpad right
-        Key::Right | Key::Key6 => match input.pad.as_mut() {
-            Some(pad) => pad.x = 1000,
-            None => input.pad = Some(Pad { x: 1000, y: 0 }),
-        },
-        // `↑`, `8`: touchpad up
-        Key::Up | Key::Key8 => match input.pad.as_mut() {
-            Some(pad) => pad.y = 1000,
-            None => input.pad = Some(Pad { x: 0, y: 1000 }),
-        },
-        // `↓`, `2`: touchpad down
-        Key::Down | Key::Key2 => match input.pad.as_mut() {
-            Some(pad) => pad.y = -1000,
-            None => input.pad = Some(Pad { x: 0, y: -1000 }),
-        },
-        // `5`: touchpad middle
-        Key::Key5 => input.pad = Some(Pad { x: 0, y: 0 }),
-        _ => {}
+    let l = win.is_key_down(Key::Left) | win.is_key_down(Key::Key4);
+    let r = win.is_key_down(Key::Right) | win.is_key_down(Key::Key6);
+    let u = win.is_key_down(Key::Up) | win.is_key_down(Key::Key8);
+    let d = win.is_key_down(Key::Down) | win.is_key_down(Key::Key2);
+
+    if !l && !r && !u && !d {
+        return InputState { pad: None, buttons };
+    }
+
+    let mut pad = Pad { x: 0, y: 0 };
+    pad.x = match (l, r) {
+        (true, true) => 0,
+        (true, false) => -1000,
+        (false, true) => 1000,
+        (false, false) => 0,
+    };
+    pad.y = match (u, d) {
+        (true, true) => 0,
+        (true, false) => 1000,
+        (false, true) => -1000,
+        (false, false) => 0,
+    };
+    InputState {
+        pad: Some(pad),
+        buttons,
     }
 }
 
