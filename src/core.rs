@@ -157,7 +157,7 @@ fn run_app<'a>(
             let config = runtime.finalize()?;
             return Ok(Some(config));
         }
-        runtime.display().update(window)?;
+        runtime.display_mut().update(window)?;
         if !window.is_open() {
             return Ok(None);
         }
