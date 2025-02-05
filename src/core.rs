@@ -152,12 +152,12 @@ fn run_app<'a>(
     runtime.start()?;
     loop {
         let exit = runtime.update()?;
+        runtime.display_mut().update(window)?;
         // Exit requested. Finalize runtime and get ownership of the device back.
         if exit {
             let config = runtime.finalize()?;
             return Ok(Some(config));
         }
-        runtime.display_mut().update(window)?;
         if !window.is_open() {
             return Ok(None);
         }
