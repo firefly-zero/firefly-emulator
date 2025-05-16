@@ -30,6 +30,14 @@ impl Display {
     }
 }
 
+impl RenderFB for Display {
+    type Error = Infallible;
+
+    fn render_fb(&mut self, frame: &mut FrameBuffer) -> Result<(), Self::Error> {
+        frame.draw(self)
+    }
+}
+
 impl OriginDimensions for Display {
     fn size(&self) -> Size {
         Size::new(WIDTH as u32, HEIGHT as u32)
