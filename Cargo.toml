@@ -10,8 +10,8 @@ clap = { version = "4.5.4", features = ["derive"] }
 # finding the VFS location
 directories = "6.0.0"
 # accessing peripherals
-firefly-hal = "0.2.0"
-# firefly-hal = { path = "../../firefly-hal" }
+# firefly-hal = "0.2.0"
+firefly-hal = { path = "../../firefly-hal" }
 # running the app
 firefly-runtime = { path = "../firefly-runtime" }
 # drawing custom menus
