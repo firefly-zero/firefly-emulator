@@ -8,13 +8,13 @@ const BUFFER_SIZE: usize = WIDTH * HEIGHT;
 
 pub(crate) struct Display {
     dirty: bool,
-    buffer: [u32; BUFFER_SIZE],
+    buffer: Box<[u32; BUFFER_SIZE]>,
 }
 
 impl Display {
     pub fn new() -> Self {
         Self {
-            buffer: [0u32; BUFFER_SIZE],
+            buffer: Box::new([0u32; BUFFER_SIZE]),
             dirty: true,
         }
     }
@@ -22,7 +22,7 @@ impl Display {
     pub fn update(&mut self, window: &mut minifb::Window) -> Result<(), minifb::Error> {
         if self.dirty {
             self.dirty = false;
-            window.update_with_buffer(&self.buffer, WIDTH, HEIGHT)
+            window.update_with_buffer(&self.buffer[..], WIDTH, HEIGHT)
         } else {
             window.update();
             Ok(())
