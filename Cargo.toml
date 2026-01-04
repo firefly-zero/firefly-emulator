@@ -1,6 +1,6 @@
 [package]
 name = "firefly-emulator"
-version = "0.8.0"
+version = "0.9.0"
 rust-version = "1.91.0"
 edition = "2024"
 
