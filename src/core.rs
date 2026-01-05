@@ -100,6 +100,12 @@ fn read_keys(win: &minifb::Window) -> InputState {
     let mut w = false;
     let mut n = false;
     let mut menu = false;
+
+    let mut l = false;
+    let mut r = false;
+    let mut u = false;
+    let mut d = false;
+
     for key in win.get_keys() {
         use Key::*;
         match key {
@@ -108,18 +114,16 @@ fn read_keys(win: &minifb::Window) -> InputState {
             A | W | B | Backspace => w = true,
             S | N | Y => n = true,
             Tab | M => menu = true,
+            Left | Key4 => l = true,
+            Right | Key6 => r = true,
+            Up | Key8 => u = true,
+            Down | Key2 => d = true,
             _ => {}
         }
     }
 
     let buttons =
         u8::from(s) | u8::from(e) << 1 | u8::from(w) << 2 | u8::from(n) << 3 | u8::from(menu) << 4;
-
-    let l = win.is_key_down(Key::Left) | win.is_key_down(Key::Key4);
-    let r = win.is_key_down(Key::Right) | win.is_key_down(Key::Key6);
-    let u = win.is_key_down(Key::Up) | win.is_key_down(Key::Key8);
-    let d = win.is_key_down(Key::Down) | win.is_key_down(Key::Key2);
-
     if !l && !r && !u && !d {
         return InputState { pad: None, buttons };
     }
