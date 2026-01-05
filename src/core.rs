@@ -141,6 +141,15 @@ fn read_keys(win: &minifb::Window) -> InputState {
         (false, true) => -1000,
         (false, false) => 0,
     };
+    // Make sure diagonal direction is within a circle.
+    // 1000/√2 ≈ 707.
+    (pad.x, pad.y) = match (pad.x, pad.y) {
+        (1000, 1000) => (707, 707),
+        (1000, -1000) => (707, -707),
+        (-1000, 1000) => (-707, 707),
+        (-1000, -1000) => (-707, -707),
+        (x, y) => (x, y),
+    };
     InputState {
         pad: Some(pad),
         buttons,
