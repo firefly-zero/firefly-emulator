@@ -1,6 +1,8 @@
+mod cli_args;
 mod core;
 mod display;
 mod error;
 
-pub use core::{run_emulator, CliArgs};
+pub use cli_args::CliArgs;
+pub use core::run_emulator;
 pub use error::Error;
