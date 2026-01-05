@@ -12,6 +12,7 @@ use std::path::PathBuf;
 type Config<'a> = RuntimeConfig<'a, Display, Rgb888>;
 
 #[derive(Debug, Parser)]
+#[command(author, version, about, long_about = None)]
 pub struct CliArgs {
     /// The scale for the window and each pixel.
     ///
