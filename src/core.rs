@@ -105,6 +105,7 @@ fn read_keys(win: &minifb::Window) -> InputState {
     let mut r = false;
     let mut u = false;
     let mut d = false;
+    let mut shift = false;
 
     for key in win.get_keys() {
         use Key::*;
@@ -118,6 +119,7 @@ fn read_keys(win: &minifb::Window) -> InputState {
             Right | Key6 => r = true,
             Up | Key8 => u = true,
             Down | Key2 => d = true,
+            LeftShift | RightShift => shift = true,
             _ => {}
         }
     }
@@ -150,6 +152,10 @@ fn read_keys(win: &minifb::Window) -> InputState {
         (-1000, -1000) => (-707, -707),
         (x, y) => (x, y),
     };
+    if shift {
+        pad.x /= 2;
+        pad.y /= 2;
+    }
     InputState {
         pad: Some(pad),
         buttons,
