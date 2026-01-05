@@ -95,14 +95,23 @@ fn run_app<'a>(
 }
 
 fn read_keys(win: &minifb::Window) -> InputState {
-    let s = win.is_key_down(Key::Z) | win.is_key_down(Key::Enter) | win.is_key_down(Key::Space);
-    let e = win.is_key_down(Key::X)
-        | win.is_key_down(Key::E)
-        | win.is_key_down(Key::B)
-        | win.is_key_down(Key::Backspace);
-    let w = win.is_key_down(Key::A) | win.is_key_down(Key::W);
-    let n = win.is_key_down(Key::S) | win.is_key_down(Key::N) | win.is_key_down(Key::Y);
-    let menu = win.is_key_down(Key::Tab);
+    let mut s = false;
+    let mut e = false;
+    let mut w = false;
+    let mut n = false;
+    let mut menu = false;
+    for key in win.get_keys() {
+        use Key::*;
+        match key {
+            Z | Space => s = true,
+            X | E | F | Enter => e = true,
+            A | W | B | Backspace => w = true,
+            S | N | Y => n = true,
+            Tab | M => menu = true,
+            _ => {}
+        }
+    }
+
     let buttons =
         u8::from(s) | u8::from(e) << 1 | u8::from(w) << 2 | u8::from(n) << 3 | u8::from(menu) << 4;
 
