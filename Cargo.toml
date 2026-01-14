@@ -12,8 +12,11 @@ directories = "6.0.0"
 # accessing peripherals
 firefly-hal = "0.3.0"
 # running the app
-firefly-runtime = { path = "../firefly-runtime" }
+firefly-runtime = { path = "../firefly/firefly-runtime" }
 # drawing custom menus
 embedded-graphics = "0.8.1"
 # showing frame buffer on the screen
 minifb = "0.28.0"
+
+[patch.crates-io]
+firefly-hal = { path = "../firefly-hal" }

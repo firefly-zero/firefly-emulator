@@ -3,5 +3,5 @@ Name=firefly-emulator
 Exec=firefly-emulator
 Icon=logo
 Type=Application
-Categories=Utility
+Categories=Game
 Terminal=true
