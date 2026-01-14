@@ -27,7 +27,7 @@ pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
             config.udp_ip = ip;
         }
         if let Some(peers) = &args.peers {
-            config.peers = peers.clone();
+            config.peers.clone_from(peers);
         }
         if let Some(wav) = &args.wav {
             config.wav = Some(wav.clone());

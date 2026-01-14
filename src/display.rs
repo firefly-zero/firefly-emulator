@@ -1,10 +1,14 @@
 use embedded_graphics::draw_target::DrawTarget;
 use embedded_graphics::pixelcolor::Rgb888;
 use embedded_graphics::prelude::*;
-use firefly_runtime::*;
+use firefly_runtime::{FrameBuffer, RenderFB};
 use std::convert::Infallible;
 
-const BUFFER_SIZE: usize = WIDTH * HEIGHT;
+#[expect(clippy::cast_possible_truncation)]
+const WIDTH: u8 = firefly_runtime::WIDTH as u8;
+#[expect(clippy::cast_possible_truncation)]
+const HEIGHT: u8 = firefly_runtime::HEIGHT as u8;
+const BUFFER_SIZE: usize = WIDTH as usize * HEIGHT as usize;
 
 pub(crate) struct Display {
     dirty: bool,
@@ -13,8 +17,9 @@ pub(crate) struct Display {
 
 impl Display {
     pub fn new() -> Self {
+        let buffer = vec![0u32; BUFFER_SIZE].into_boxed_slice();
         Self {
-            buffer: Box::new([0u32; BUFFER_SIZE]),
+            buffer: buffer.try_into().unwrap(),
             dirty: true,
         }
     }
@@ -22,7 +27,7 @@ impl Display {
     pub fn update(&mut self, window: &mut minifb::Window) -> Result<(), minifb::Error> {
         if self.dirty {
             self.dirty = false;
-            window.update_with_buffer(&self.buffer[..], WIDTH, HEIGHT)
+            window.update_with_buffer(&self.buffer[..], WIDTH as _, HEIGHT as _)
         } else {
             window.update();
             Ok(())
@@ -40,7 +45,7 @@ impl RenderFB for Display {
 
 impl OriginDimensions for Display {
     fn size(&self) -> Size {
-        Size::new(WIDTH as u32, HEIGHT as u32)
+        Size::new(u32::from(WIDTH), u32::from(HEIGHT))
     }
 }
 
@@ -54,13 +59,14 @@ impl DrawTarget for Display {
     {
         self.dirty = true;
         for Pixel(point, color) in pixels {
-            if point.x >= WIDTH as i32 || point.y >= HEIGHT as i32 {
+            if point.x >= i32::from(WIDTH) || point.y >= i32::from(HEIGHT) {
                 continue;
             }
             if point.x < 0 || point.y < 0 {
                 continue;
             }
-            let index = (point.y as usize) * WIDTH + (point.x as usize);
+            #[expect(clippy::cast_sign_loss)]
+            let index = (point.y as usize) * WIDTH as usize + (point.x as usize);
             self.buffer[index] = color.into_storage();
         }
         Ok(())
