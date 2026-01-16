@@ -1,5 +1,5 @@
 use clap::Parser;
-use firefly_emulator::{run_emulator, CliArgs};
+use firefly_emulator::{CliArgs, run_emulator};
 
 fn main() {
     let cli_args = CliArgs::parse();
@@ -13,6 +13,7 @@ fn main() {
             println!("Nothing is installed so there is nothing to run.");
             println!("You can start by installing the launcher and some games:");
             println!("  firefly_cli import sys.launcher");
+            println!("  firefly_cli import lux.gates");
             println!("  firefly_cli import lux.snek");
         } else {
             println!("{err}");
