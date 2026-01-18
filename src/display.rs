@@ -51,6 +51,24 @@ impl Display {
             Ok(())
         }
     }
+
+    fn set_pixel(&mut self, point: Point, color: Rgb888) {
+        if point.x >= i32::from(WIDTH) || point.y >= i32::from(HEIGHT) {
+            return;
+        }
+        if point.x < 0 || point.y < 0 {
+            return;
+        }
+        #[expect(clippy::cast_sign_loss)]
+        let index = if self.device {
+            let line_offset = (point.y as usize + SCREEN_M) * DEVICE_W;
+            let col_offset = point.x as usize + PANEL_W;
+            line_offset + col_offset
+        } else {
+            (point.y as usize) * SCREEN_W + (point.x as usize)
+        };
+        self.buffer[index] = color.into_storage();
+    }
 }
 
 impl RenderFB for Display {
@@ -71,27 +89,13 @@ impl DrawTarget for Display {
     type Color = Rgb888;
     type Error = Infallible;
 
-    #[expect(clippy::cast_sign_loss)]
     fn draw_iter<I>(&mut self, pixels: I) -> Result<(), Self::Error>
     where
         I: IntoIterator<Item = embedded_graphics::prelude::Pixel<Self::Color>>,
     {
         self.dirty = true;
         for Pixel(point, color) in pixels {
-            if point.x >= i32::from(WIDTH) || point.y >= i32::from(HEIGHT) {
-                continue;
-            }
-            if point.x < 0 || point.y < 0 {
-                continue;
-            }
-            let index = if self.device {
-                let line_offset = (point.y as usize + SCREEN_M) * DEVICE_W;
-                let col_offset = point.x as usize + PANEL_W;
-                line_offset + col_offset
-            } else {
-                (point.y as usize) * SCREEN_W + (point.x as usize)
-            };
-            self.buffer[index] = color.into_storage();
+            self.set_pixel(point, color);
         }
         Ok(())
     }
