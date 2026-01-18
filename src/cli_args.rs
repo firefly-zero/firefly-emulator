@@ -18,6 +18,10 @@ pub struct CliArgs {
     #[arg(long, default_value_t = false)]
     pub fullscreen: bool,
 
+    /// Don't display the device mockup, show only the screen.
+    #[arg(long, default_value_t = false)]
+    pub screen_only: bool,
+
     /// The full ID of the app to run.
     ///
     /// If not specified, will start launcher (if installed) or the latest installed app.

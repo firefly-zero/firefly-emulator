@@ -1,4 +1,4 @@
-use crate::display::Display;
+use crate::display::*;
 use crate::error::Error;
 use crate::*;
 use directories::ProjectDirs;
@@ -35,8 +35,9 @@ pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
         DeviceImpl::new(config)
     };
 
+    let display = Display::new(!args.screen_only);
     let opts = args.options()?;
-    let mut window = minifb::Window::new("Firefly emulator", WIDTH, HEIGHT, opts)?;
+    let mut window = minifb::Window::new("Firefly emulator", display.width, display.height, opts)?;
     let id = match &args.id {
         Some(full_id) => Some(FullID::try_from(full_id.as_str())?),
         None => None,
@@ -44,7 +45,7 @@ pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
     let mut config = RuntimeConfig {
         id,
         device,
-        display: Display::new(),
+        display,
         net_handler: NetHandler::None,
     };
     loop {
