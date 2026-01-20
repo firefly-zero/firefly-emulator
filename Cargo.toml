@@ -3,6 +3,9 @@ name = "firefly-emulator"
 version = "0.9.1"
 rust-version = "1.91.0"
 edition = "2024"
+description = "Desktop emulator for Firefly Zero"
+license = "GPL-3.0"
+repository = "https://github.com/firefly-zero/firefly-emulator"
 
 [dependencies]
 # parsing CLI flags
