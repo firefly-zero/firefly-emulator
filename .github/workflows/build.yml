@@ -1,0 +1,128 @@
+name: build
+
+on:
+  push:
+    tags:
+      - "*"
+
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: ${{ matrix.job.target }}
+    runs-on: ${{ matrix.job.os }}
+    env:
+      NAME: "firefly-emulator"
+    strategy:
+      fail-fast: false
+      matrix:
+        job:
+          # https://github.com/actions/runner-images
+          # Linux
+          - { target: aarch64-unknown-linux-musl, os: ubuntu-24.04 }
+          - { target: arm-unknown-linux-musleabihf, os: ubuntu-24.04 }
+          - { target: x86_64-unknown-linux-musl, os: ubuntu-24.04 }
+          - { target: i686-unknown-linux-musl, os: ubuntu-24.04 }
+          # OS X
+          - { target: aarch64-apple-darwin, os: macos-15 }
+          - { target: x86_64-apple-darwin, os: macos-15-intel }
+          # Windows
+          - { target: aarch64-pc-windows-msvc, os: windows-11-arm }
+          - { target: x86_64-pc-windows-msvc, os: windows-2025 }
+          - { target: i686-pc-windows-msvc, os: windows-2025 }
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set binary name, path and version
+        shell: bash
+        run: |
+          # Figure out suffix of binary
+          SUFFIX=""
+          case ${{ matrix.job.target }} in
+            *-pc-windows-*)
+            SUFFIX=".exe"
+            ;;
+          esac;
+
+          # Setup paths
+          BIN_NAME="${NAME}${SUFFIX}"
+          BIN_PATH="../target/${{ matrix.job.target }}/release/${BIN_NAME}"
+          # BIN_PATH=$(realpath "$BIN_PATH")  # absolute path
+
+          # Let subsequent steps know where to find the binary
+          echo "BIN_NAME=${BIN_NAME}" >> $GITHUB_ENV
+          echo "BIN_PATH=${BIN_PATH}" >> $GITHUB_ENV
+
+          echo "BIN_NAME=${BIN_NAME}" >> $GITHUB_OUTPUT
+          echo "BIN_PATH=${BIN_PATH}" >> $GITHUB_OUTPUT
+
+          VERSION=$(cargo metadata --format-version=1 --no-deps | jq -r ".packages[] | select(.name == \"$NAME\") | .version")
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Show debug information
+        shell: bash
+        run: |
+          echo "Software versions:"
+          rustup -V
+          rustup toolchain list
+          rustup default
+          cargo -V
+          rustc -V
+
+          echo
+          echo "[PWD]"
+          pwd
+
+          echo
+          echo '[ENV]'
+          env
+
+          echo
+          echo "Tag name from GITHUB_REF_NAME: $GITHUB_REF_NAME"
+          echo "Tag name from github.ref_name: ${{  github.ref_name }}"
+
+      - name: check tag matches Cargo.toml version
+        shell: bash
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          test "$GITHUB_REF_NAME" == "$VERSION"
+
+      - name: Deps for Linux builds
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          sudo apt-get install -y libasound2-dev libudev-dev
+
+      - name: Build
+        shell: bash
+        run: cargo build --release --target=${{ matrix.job.target }}
+
+      - name: Create artifacts
+        id: package
+        shell: bash
+        run: |
+          # TARBALL
+          TARBALL_NAME="${BIN_NAME}-v${VERSION}-${{ matrix.job.target }}.tgz"
+          tar -czf "$TARBALL_NAME" -C $(dirname "${BIN_PATH}") ${BIN_NAME}
+          TARBALL_PATH=`find $(pwd -P) -name ${TARBALL_NAME}`
+          if [ ${{ matrix.job.target }} == "x86_64-pc-windows-msvc" ]; then
+            TARBALL_PATH=`echo $TARBALL_PATH | sed 's/\/d/d:/'`
+          fi
+          stat "${TARBALL_PATH}"
+          echo TARBALL=${TARBALL_PATH} >> $GITHUB_OUTPUT
+
+      - name: Publish archives and packages
+        uses: softprops/action-gh-release@v2.2.1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            ${{ steps.package.outputs.TARBALL }}
+          tag_name: ${{ steps.bin.outputs.VERSION }}
+          append_body: true
+          fail_on_unmatched_files: true
