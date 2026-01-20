@@ -1,9 +1,34 @@
 # https://taskfile.dev
-version: '3'
+version: "3"
 
 tasks:
   run:
     cmds:
       - cargo run
+  release:
+    desc: build and publish release
+    cmds:
+      - test {{.CLI_ARGS}}
+      - grep -F '"{{.CLI_ARGS}}"' Cargo.toml
+      - cargo publish
+      - git tag {{.CLI_ARGS}}
+      - git push
+      - git push --tags
+      - gh release create --generate-notes {{.CLI_ARGS}}
+
+  test:
+    cmds:
+      - cargo test
+  lint:
+    cmds:
+      - cargo clippy
+  format:
+    cmds:
+      - cargo fmt
+  all:
+    cmds:
+      - task: format
+      - task: lint
+      - task: test
   default:
-    - task: run
+    - task: all
