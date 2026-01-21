@@ -50,9 +50,7 @@ jobs:
         job:
           # https://github.com/actions/runner-images
           # Linux
-          - { target: aarch64-unknown-linux-gnu, os: ubuntu-24.04 }
           - { target: x86_64-unknown-linux-gnu, os: ubuntu-24.04 }
-          - { target: i686-unknown-linux-gnu, os: ubuntu-24.04 }
           # OS X
           - { target: aarch64-apple-darwin, os: macos-15 }
           - { target: x86_64-apple-darwin, os: macos-15-intel }
@@ -69,17 +67,6 @@ jobs:
         with:
           targets: ${{ matrix.job.target }}
 
-      - name: Install cross
-        if: runner.os == 'Linux'
-        uses: taiki-e/install-action@v2
-        with:
-          tool: cross
-
-      - name: Overwrite build command env variable
-        if: runner.os == 'Linux'
-        shell: bash
-        run: echo "BUILD_CMD=cross" >> $GITHUB_ENV
-
       - name: Show version information
         shell: bash
         run: |
@@ -89,6 +76,12 @@ jobs:
           cargo -V
           rustc -V
 
+      - if: runner.os == 'Linux'
+        shell: bash
+        run: sudo apt-get update
+      - if: runner.os == 'Linux'
+        shell: bash
+        run: sudo apt-get install -y libasound2-dev libudev-dev
       - shell: bash
         run: $BUILD_CMD build --release --target=${{ matrix.job.target }}
 

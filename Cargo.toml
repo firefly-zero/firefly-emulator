@@ -1,6 +1,6 @@
 [package]
 name = "firefly-emulator"
-version = "0.9.6"
+version = "0.9.7"
 rust-version = "1.91.0"
 edition = "2024"
 description = "Desktop emulator for Firefly Zero"
@@ -24,9 +24,3 @@ minifb = "0.28.0"
 # [patch.crates-io]
 # firefly-hal = { path = "../firefly-hal" }
 # firefly-runtime = { path = "../firefly-runtime" }
-
-[package.metadata.cross.build]
-pre-build = [
-    "apt-get update",
-    "apt-get install -y libasound2-dev:$CROSS_DEB_ARCH libudev-dev:$CROSS_DEB_ARCH",
-]
