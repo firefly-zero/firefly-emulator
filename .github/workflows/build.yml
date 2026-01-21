@@ -107,7 +107,7 @@ jobs:
         id: package
         shell: bash
         run: |
-          PKG_suffix=".tar.gz" ; case ${{ matrix.job.target }} in *-pc-windows-*) PKG_suffix=".zip" ;; esac;
+          PKG_suffix=".tgz"
           PKG_NAME="firefly-emulator-${{ matrix.job.target }}${PKG_suffix}"
           echo "PKG_NAME=${PKG_NAME}" >> $GITHUB_OUTPUT
 
