@@ -89,12 +89,6 @@ jobs:
           cargo -V
           rustc -V
 
-      - if: runner.os == 'Linux'
-        shell: bash
-        run: sudo apt-get update
-      - if: runner.os == 'Linux'
-        shell: bash
-        run: sudo apt-get install -y libasound2-dev libudev-dev
       - shell: bash
         run: $BUILD_CMD build --release --target=${{ matrix.job.target }}
 
