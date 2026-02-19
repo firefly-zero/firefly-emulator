@@ -1,6 +1,6 @@
 [package]
 name = "firefly-emulator"
-version = "0.9.8"
+version = "0.10.0"
 rust-version = "1.91.0"
 edition = "2024"
 description = "Desktop emulator for Firefly Zero"
@@ -9,18 +9,14 @@ repository = "https://github.com/firefly-zero/firefly-emulator"
 
 [dependencies]
 # parsing CLI flags
-clap = { version = "4.5.4", features = ["derive"] }
+clap = { version = "4.5.60", features = ["derive"] }
 # finding the VFS location
 directories = "6.0.0"
 # accessing peripherals
-firefly-hal = "0.3.1"
+firefly-hal = "0.3.3"
 # running the app
-firefly-runtime = "0.9.1"
+firefly-runtime = "0.10.1"
 # drawing custom menus
-embedded-graphics = "0.8.1"
+embedded-graphics = "0.8.2"
 # showing frame buffer on the screen
 minifb = "0.28.0"
-
-# [patch.crates-io]
-# firefly-hal = { path = "../firefly-hal" }
-# firefly-runtime = { path = "../firefly-runtime" }
