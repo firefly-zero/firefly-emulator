@@ -20,3 +20,10 @@ firefly-runtime = "0.10.1"
 embedded-graphics = "0.8.2"
 # showing frame buffer on the screen
 minifb = "0.28.0"
+
+[patch.crates-io]
+firefly-runtime = { git = "https://github.com/Robbepop/firefly-runtime.git", branch = "rf-update-wasmi-to-v2.0.0-beta.1" }
+
+[profile.dev.package.wasmi]
+opt-level = 3
+codegen-units = 1
