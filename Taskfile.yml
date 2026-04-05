@@ -4,7 +4,7 @@ version: "3"
 tasks:
   run:
     cmds:
-      - cargo run
+      - cargo run -- {{.CLI_ARGS}}
   release:
     desc: build and publish release
     cmds:
