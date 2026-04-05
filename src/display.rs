@@ -6,10 +6,10 @@ use std::convert::Infallible;
 
 pub const SCREEN_W: usize = firefly_runtime::WIDTH;
 pub const SCREEN_H: usize = firefly_runtime::HEIGHT;
-pub const SCREEN_M: usize = 20;
-pub const PANEL_W: usize = 155;
-pub const DEVICE_W: usize = PANEL_W * 2 + SCREEN_W;
-pub const DEVICE_H: usize = SCREEN_M * 2 + SCREEN_H;
+pub const DEVICE_W: usize = 550;
+pub const DEVICE_H: usize = 201;
+pub const PANEL_W: usize = (DEVICE_W - SCREEN_W) / 2;
+pub const SCREEN_M: usize = (DEVICE_H - SCREEN_H) / 2;
 
 #[expect(clippy::cast_possible_truncation)]
 const WIDTH: u8 = firefly_runtime::WIDTH as u8;
