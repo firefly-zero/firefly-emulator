@@ -72,7 +72,7 @@ impl CliArgs {
         let opts = minifb::WindowOptions {
             borderless: self.fullscreen,
             scale,
-            scale_mode: minifb::ScaleMode::Stretch,
+            scale_mode: minifb::ScaleMode::AspectRatioStretch,
             resize: true,
             ..Default::default()
         };
