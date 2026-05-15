@@ -47,6 +47,7 @@ pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
         display: Display::new(),
         net_handler: NetHandler::None,
     };
+    config.apply_settings();
     loop {
         config = match run_app(&mut window, config, !args.no_keyboard)? {
             Some(config) => config,

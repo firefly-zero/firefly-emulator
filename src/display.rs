@@ -1,7 +1,7 @@
 use embedded_graphics::draw_target::DrawTarget;
 use embedded_graphics::pixelcolor::Rgb888;
 use embedded_graphics::prelude::*;
-use firefly_runtime::{FrameBuffer, RenderFB};
+use firefly_runtime::{FireflyDisplay, FrameBuffer};
 use std::convert::Infallible;
 
 #[expect(clippy::cast_possible_truncation)]
@@ -12,6 +12,7 @@ const BUFFER_SIZE: usize = WIDTH as usize * HEIGHT as usize;
 
 pub(crate) struct Display {
     dirty: bool,
+    rotated: bool,
     buffer: Box<[u32; BUFFER_SIZE]>,
 }
 
@@ -21,6 +22,7 @@ impl Display {
         Self {
             buffer: buffer.try_into().unwrap(),
             dirty: true,
+            rotated: true,
         }
     }
 
@@ -35,11 +37,19 @@ impl Display {
     }
 }
 
-impl RenderFB for Display {
+impl FireflyDisplay for Display {
     type Error = Infallible;
 
     fn render_fb(&mut self, frame: &mut FrameBuffer) -> Result<(), Self::Error> {
         frame.draw(self)
+    }
+
+    fn rotate(&mut self, rotate: bool) {
+        self.rotated = rotate;
+    }
+
+    fn set_brightness(&mut self, _brightness: u8) {
+        // ...
     }
 }
 
@@ -66,7 +76,10 @@ impl DrawTarget for Display {
                 continue;
             }
             #[expect(clippy::cast_sign_loss)]
-            let index = (point.y as usize) * WIDTH as usize + (point.x as usize);
+            let mut index = (point.y as usize) * WIDTH as usize + (point.x as usize);
+            if self.rotated {
+                index = self.buffer.len() - index - 1;
+            }
             self.buffer[index] = color.into_storage();
         }
         Ok(())
