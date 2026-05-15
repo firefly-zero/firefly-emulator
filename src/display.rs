@@ -35,6 +35,21 @@ impl Display {
             Ok(())
         }
     }
+
+    fn set_pixel(&mut self, point: Point, color: Rgb888) {
+        if point.x >= i32::from(WIDTH) || point.y >= i32::from(HEIGHT) {
+            return;
+        }
+        if point.x < 0 || point.y < 0 {
+            return;
+        }
+        #[expect(clippy::cast_sign_loss)]
+        let mut index = (point.y as usize) * WIDTH as usize + (point.x as usize);
+        if self.rotated {
+            index = self.buffer.len() - index - 1;
+        }
+        self.buffer[index] = color.into_storage();
+    }
 }
 
 impl FireflyDisplay for Display {
@@ -69,18 +84,7 @@ impl DrawTarget for Display {
     {
         self.dirty = true;
         for Pixel(point, color) in pixels {
-            if point.x >= i32::from(WIDTH) || point.y >= i32::from(HEIGHT) {
-                continue;
-            }
-            if point.x < 0 || point.y < 0 {
-                continue;
-            }
-            #[expect(clippy::cast_sign_loss)]
-            let mut index = (point.y as usize) * WIDTH as usize + (point.x as usize);
-            if self.rotated {
-                index = self.buffer.len() - index - 1;
-            }
-            self.buffer[index] = color.into_storage();
+            self.set_pixel(point, color);
         }
         Ok(())
     }
