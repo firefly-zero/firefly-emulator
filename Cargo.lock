@@ -1103,9 +1103,9 @@ checksum = "5baebc0774151f905a1a2cc41989300b1e6fbb29aff0ceffa1064fdd3088d582"
 
 [[package]]
 name = "firefly-audio"
-version = "0.2.2"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ad4abc41182a1c0c9c1217ebd0d6350bb5d9be35b5cca150ba3f2a82224c57a4"
+checksum = "5113f8c983a2d00bcd261dabee05140b30b02d2bd929566e77fe029b3822a0ec"
 dependencies = [
  "embedded-io 0.6.1",
  "micromath",
@@ -1114,7 +1114,7 @@ dependencies = [
 
 [[package]]
 name = "firefly-emulator"
-version = "0.11.0"
+version = "0.12.0"
 dependencies = [
  "clap",
  "directories",
@@ -1126,7 +1126,9 @@ dependencies = [
 
 [[package]]
 name = "firefly-hal"
-version = "0.4.0"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e2d76299945a47a6219ab98f83afdc6e7fbba54c023ff686d6750bf2eaa5a6b0"
 dependencies = [
  "cobs 0.5.1",
  "embedded-hal 1.0.0",
@@ -1151,7 +1153,9 @@ dependencies = [
 
 [[package]]
 name = "firefly-runtime"
-version = "0.11.0"
+version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8db520f0a6cca341671dff69e4fcaf01918e30634b4489f2c1a1fabe7fcaf728"
 dependencies = [
  "embedded-graphics",
  "embedded-io 0.6.1",
@@ -3318,9 +3322,9 @@ dependencies = [
 
 [[package]]
 name = "wide"
-version = "1.4.0"
+version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9a7714cd0430a663154667c74da5d09325c2387695bee18b3f7f72825aa3693a"
+checksum = "dfdfe6a32973f2d1b268b8895845a8a96cac2f0191e72c27cc929036060dbf89"
 dependencies = [
  "bytemuck",
  "safe_arch",
