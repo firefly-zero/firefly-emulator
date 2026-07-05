@@ -32,6 +32,9 @@ pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
         if let Some(wav) = &args.wav {
             config.wav = Some(wav.clone());
         }
+        if args.mute {
+            config.mute = true;
+        }
         DeviceImpl::new(config)
     };
 

@@ -52,6 +52,10 @@ pub struct CliArgs {
     /// and just want to use gamepad as input.
     #[arg(long, default_value_t = false)]
     pub no_keyboard: bool,
+
+    /// Don't play any audio.
+    #[arg(long, default_value_t = false)]
+    pub mute: bool,
 }
 
 impl CliArgs {
