@@ -1127,8 +1127,6 @@ dependencies = [
 [[package]]
 name = "firefly-hal"
 version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e2d76299945a47a6219ab98f83afdc6e7fbba54c023ff686d6750bf2eaa5a6b0"
 dependencies = [
  "cobs 0.5.1",
  "embedded-hal 1.0.0",
@@ -1154,8 +1152,6 @@ dependencies = [
 [[package]]
 name = "firefly-runtime"
 version = "0.12.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8db520f0a6cca341671dff69e4fcaf01918e30634b4489f2c1a1fabe7fcaf728"
 dependencies = [
  "embedded-graphics",
  "embedded-io 0.6.1",
@@ -1172,9 +1168,9 @@ dependencies = [
 
 [[package]]
 name = "firefly-types"
-version = "0.10.0"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3f54b0d955fd4f7c742f0f5c59caee9c3bae75fe15ec67469731bb6db999c381"
+checksum = "404cfd65fc0c437c230d1fb23ad1eba84898ace7331a118f72ab3207b4c90490"
 dependencies = [
  "postcard",
  "serde",

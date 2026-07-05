@@ -48,6 +48,14 @@ pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
         net_handler: NetHandler::None,
     };
     config.apply_settings();
+    config.save_device_info(DeviceInfo {
+        model: 2,
+        serial: 12_3147_4813,
+        main_version: get_firmware_version(),
+        io_version: (9, 99, 99),
+        main_partition: 0,
+        io_partition: 0,
+    });
     loop {
         config = match run_app(&mut window, config, !args.no_keyboard)? {
             Some(config) => config,
@@ -182,4 +190,11 @@ fn get_vfs_path() -> PathBuf {
             None => PathBuf::from(".firefly"),
         },
     }
+}
+
+fn get_firmware_version() -> (u8, u8, u8) {
+    let major: u8 = env!("CARGO_PKG_VERSION_MAJOR").parse().unwrap();
+    let minor: u8 = env!("CARGO_PKG_VERSION_MINOR").parse().unwrap();
+    let patch: u8 = env!("CARGO_PKG_VERSION_PATCH").parse().unwrap();
+    (major, minor, patch)
 }

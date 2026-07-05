@@ -21,7 +21,7 @@ embedded-graphics = "0.8.2"
 # showing frame buffer on the screen
 minifb = "0.28.0"
 
-# [patch.crates-io]
+[patch.crates-io]
 # firefly-audio = { path = "../firefly-audio" }
-# firefly-runtime = { path = "../firefly-runtime" }
-# firefly-hal = { path = "../firefly-hal" }
+firefly-runtime = { path = "../firefly-runtime" }
+firefly-hal = { path = "../firefly-hal" }
