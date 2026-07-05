@@ -23,5 +23,7 @@ minifb = "0.28.0"
 
 [patch.crates-io]
 # firefly-audio = { path = "../firefly-audio" }
-firefly-runtime = { path = "../firefly-runtime" }
-firefly-hal = { path = "../firefly-hal" }
+# firefly-runtime = { path = "../firefly-runtime" }
+# firefly-hal = { path = "../firefly-hal" }
+firefly-runtime = { git = "https://github.com/firefly-zero/firefly-runtime.git" }
+firefly-hal = { git = "https://github.com/firefly-zero/firefly-hal.git" }

@@ -1127,6 +1127,7 @@ dependencies = [
 [[package]]
 name = "firefly-hal"
 version = "0.5.0"
+source = "git+https://github.com/firefly-zero/firefly-hal.git#412428fbe3f98b6588713c9a81df3d768b684b87"
 dependencies = [
  "cobs 0.5.1",
  "embedded-hal 1.0.0",
@@ -1152,6 +1153,7 @@ dependencies = [
 [[package]]
 name = "firefly-runtime"
 version = "0.12.0"
+source = "git+https://github.com/firefly-zero/firefly-runtime.git#c1e0af81cb905af8bd294f3629bd3de6f237f78d"
 dependencies = [
  "embedded-graphics",
  "embedded-io 0.6.1",
