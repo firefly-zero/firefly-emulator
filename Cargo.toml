@@ -26,4 +26,4 @@ minifb = "0.28.0"
 # firefly-runtime = { path = "../firefly-runtime" }
 # firefly-hal = { path = "../firefly-hal" }
 firefly-runtime = { git = "https://github.com/firefly-zero/firefly-runtime.git" }
-firefly-hal = { git = "https://github.com/firefly-zero/firefly-hal.git" }
+firefly-hal = { git = "https://github.com/firefly-zero/firefly-hal.git", commit = "37039218ae3e945e61b4ad4493dff13a5d97ed62" }

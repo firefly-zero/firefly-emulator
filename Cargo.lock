@@ -1127,7 +1127,7 @@ dependencies = [
 [[package]]
 name = "firefly-hal"
 version = "0.5.0"
-source = "git+https://github.com/firefly-zero/firefly-hal.git#412428fbe3f98b6588713c9a81df3d768b684b87"
+source = "git+https://github.com/firefly-zero/firefly-hal.git#37039218ae3e945e61b4ad4493dff13a5d97ed62"
 dependencies = [
  "cobs 0.5.1",
  "embedded-hal 1.0.0",
