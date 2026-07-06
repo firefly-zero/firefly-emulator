@@ -1114,7 +1114,7 @@ dependencies = [
 
 [[package]]
 name = "firefly-emulator"
-version = "0.12.0"
+version = "0.12.1"
 dependencies = [
  "clap",
  "directories",
@@ -1126,8 +1126,9 @@ dependencies = [
 
 [[package]]
 name = "firefly-hal"
-version = "0.5.0"
-source = "git+https://github.com/firefly-zero/firefly-hal.git#37039218ae3e945e61b4ad4493dff13a5d97ed62"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9870e376af0fa69e934e4fc75882fb0e6a82e54de1c51ac64c00ad74a4b5db88"
 dependencies = [
  "cobs 0.5.1",
  "embedded-hal 1.0.0",
@@ -1152,8 +1153,9 @@ dependencies = [
 
 [[package]]
 name = "firefly-runtime"
-version = "0.12.0"
-source = "git+https://github.com/firefly-zero/firefly-runtime.git#c1e0af81cb905af8bd294f3629bd3de6f237f78d"
+version = "0.12.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a5278988a6cd2aff5b6c4587844b3f08ddebb6bd5f38f94c02c88ee438a6eed2"
 dependencies = [
  "embedded-graphics",
  "embedded-io 0.6.1",
