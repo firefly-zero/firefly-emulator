@@ -94,12 +94,14 @@ fn run_app<'a>(
             return Ok(Some(config));
         }
         if !window.is_open() {
-            runtime.finalize()?;
+            let config = runtime.finalize()?;
+            config.finalize();
             return Ok(None);
         }
         if keyboard {
             if window.is_key_down(Key::Escape) {
-                runtime.finalize()?;
+                let config = runtime.finalize()?;
+                config.finalize();
                 return Ok(None);
             }
             let input = read_keys(window);
