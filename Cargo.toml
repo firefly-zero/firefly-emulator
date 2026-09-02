@@ -21,7 +21,12 @@ embedded-graphics = "0.8.2"
 # showing frame buffer on the screen
 minifb = "0.28.0"
 
-# [patch.crates-io]
-# firefly-audio = { path = "../firefly-audio" }
-# firefly-runtime = { path = "../firefly-runtime" }
-# firefly-hal = { path = "../firefly-hal" }
+[patch.crates-io]
+firefly-audio = { path = "../firefly-audio" }
+firefly-runtime = { path = "../firefly-runtime" }
+firefly-hal = { path = "../firefly-hal" }
+
+# Required to be able to run dev builds without wasmi segfaulting.
+[profile.dev]
+opt-level = 3
+debug-assertions = false
