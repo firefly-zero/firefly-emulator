@@ -40,12 +40,12 @@ pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
 
     let opts = args.options()?;
     let mut window = minifb::Window::new("Firefly emulator", WIDTH, HEIGHT, opts)?;
-    let id = match &args.id {
-        Some(full_id) => Some(FullID::try_from(full_id.as_str())?),
-        None => None,
+    let next = match &args.id {
+        Some(full_id) => NextApp::ID(FullID::try_from(full_id.as_str())?),
+        None => NextApp::Launcher,
     };
     let mut config = RuntimeConfig {
-        id,
+        next,
         device,
         display: Display::new(),
         net_handler: NetHandler::None,
@@ -73,7 +73,7 @@ fn run_app<'a>(
     mut config: Config<'a>,
     keyboard: bool,
 ) -> Result<Option<Config<'a>>, Error> {
-    let title = if let Some(id) = &config.id {
+    let title = if let NextApp::ID(id) = &config.next {
         format!("Firefly Emulator: {}.{}", id.author(), id.app())
     } else {
         "Firefly Emulator".to_string()
@@ -91,6 +91,10 @@ fn run_app<'a>(
         // Exit requested. Finalize runtime and get ownership of the device back.
         if exit {
             let config = runtime.finalize()?;
+            if config.next == NextApp::PowerOff {
+                config.finalize();
+                return Ok(None);
+            }
             return Ok(Some(config));
         }
         if !window.is_open() {
