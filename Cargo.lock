@@ -102,6 +102,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "arbitrary-int"
+version = "2.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0ab387a0c4143b4fd3804e193946e78c8ab16cf26c5fde2048e4ac3d618c3b64"
+
+[[package]]
 name = "arrayvec"
 version = "0.7.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -136,6 +142,17 @@ name = "az"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7b7e4c2464d97fe331d41de9d5db0def0a96f4d823b8b32a2efd503578988973"
+
+[[package]]
+name = "bitbybit"
+version = "2.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bf218b839af0730012cc21856c4149789afde9ae6dc3078c7adaf311e8b76854"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.119",
+]
 
 [[package]]
 name = "bitfield"
@@ -868,14 +885,32 @@ dependencies = [
 
 [[package]]
 name = "embedded-sdmmc"
-version = "0.9.0"
+version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ce3c7f9ea039eeafc4a49597b7bd5ae3a1c8e51b2803a381cb0f29ce90fe1ec6"
+checksum = "3fc3ac32bcb461732f1cbc1f199ae3c09f150b18ac6f48a560bef91e0d73ca30"
 dependencies = [
+ "arbitrary-int",
+ "bitbybit",
+ "bitflags 2.13.2",
  "byteorder",
  "embedded-hal 1.0.0",
- "embedded-io 0.6.1",
- "heapless 0.8.0",
+ "embedded-io 0.7.1",
+ "embedded-sdmmc-types",
+ "heapless 0.9.3",
+ "hex-literal",
+ "thiserror 2.0.20",
+]
+
+[[package]]
+name = "embedded-sdmmc-types"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4234384920317421a61a221dd06dda643ee13d95d4a95532a6294b4d01a8852f"
+dependencies = [
+ "arbitrary-int",
+ "bitbybit",
+ "bitflags 2.13.2",
+ "thiserror 2.0.20",
 ]
 
 [[package]]
@@ -1266,6 +1301,8 @@ checksum = "ef25905e51abafe4dcea6c15fec58c57b601cdbd0ee53d22ea1d3016c587d39b"
 [[package]]
 name = "firefly-audio"
 version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5113f8c983a2d00bcd261dabee05140b30b02d2bd929566e77fe029b3822a0ec"
 dependencies = [
  "embedded-io 0.6.1",
  "micromath",
@@ -1274,7 +1311,7 @@ dependencies = [
 
 [[package]]
 name = "firefly-emulator"
-version = "0.13.0"
+version = "0.14.0"
 dependencies = [
  "clap",
  "directories",
@@ -1286,7 +1323,9 @@ dependencies = [
 
 [[package]]
 name = "firefly-hal"
-version = "0.5.2"
+version = "0.5.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7dab196a79d49c279ada0c3b710516b610d01902a16a2507905f5b4dd22bcf1d"
 dependencies = [
  "cobs 0.5.1",
  "embedded-hal 1.0.0",
@@ -1314,7 +1353,9 @@ dependencies = [
 
 [[package]]
 name = "firefly-runtime"
-version = "0.13.0"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f97a9daa8b2a8b10042dc39de96305ad18387e17fb58b4b8bf5660c05ff4c178"
 dependencies = [
  "embedded-graphics",
  "embedded-io 0.6.1",
@@ -1331,9 +1372,9 @@ dependencies = [
 
 [[package]]
 name = "firefly-types"
-version = "0.12.0"
+version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ec5657c56ca5e540cc815032dd0242b7bf4c331cbfc426db2c83697d0f7c070d"
+checksum = "216a00c715276eec2a0a2cc82b04952292baaf117b2ce555de96560309e96e9c"
 dependencies = [
  "postcard",
  "serde",
@@ -1632,6 +1673,12 @@ name = "heck"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
+
+[[package]]
+name = "hex-literal"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e712f64ec3850b98572bffac52e2c6f282b29fe6c5fa6d42334b30be438d95c1"
 
 [[package]]
 name = "hound"
