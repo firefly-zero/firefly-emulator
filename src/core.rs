@@ -1,6 +1,6 @@
-use crate::display::Display;
 use crate::error::Error;
 use crate::*;
+use crate::{audio::spawn_audio_thread, display::Display};
 use directories::ProjectDirs;
 use embedded_graphics::pixelcolor::Rgb888;
 use firefly_hal::{DeviceConfig, DeviceImpl, InputState, Pad};
@@ -32,11 +32,12 @@ pub fn run_emulator(args: &CliArgs) -> Result<(), Error> {
         if let Some(wav) = &args.wav {
             config.wav = Some(wav.clone());
         }
-        if args.mute {
-            config.mute = true;
-        }
         DeviceImpl::new(config)
     };
+
+    if !args.mute {
+        spawn_audio_thread(args);
+    }
 
     let opts = args.options()?;
     let mut window = minifb::Window::new("Firefly emulator", WIDTH, HEIGHT, opts)?;

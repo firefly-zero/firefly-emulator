@@ -7,6 +7,7 @@
     clippy::match_same_arms
 )]
 
+mod audio;
 mod cli_args;
 mod core;
 mod display;

@@ -18,9 +18,13 @@ firefly-hal = "0.5.3"
 firefly-runtime = "0.14.0"
 # Drawing custom menus.
 embedded-graphics = "0.8.2"
+# Write wav files.
+hound = "3.5.1"
 # Showing frame buffer on the screen.
 # Don't update: 0.29.0 is vibe-coded.
 minifb = "0.28.0"
+# Play audio through speakers.
+rodio = { version = "0.21.1", features = ["playback"] }
 
 [patch.crates-io]
 firefly-audio = { path = "../firefly-audio" }
