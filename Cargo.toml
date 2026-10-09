@@ -8,23 +8,24 @@ license = "GPL-3.0"
 repository = "https://github.com/firefly-zero/firefly-emulator"
 
 [dependencies]
-# parsing CLI flags
+# Parsing CLI flags.
 clap = { version = "4.6.6", features = ["derive"] }
-# finding the VFS location
+# Finding the VFS location.
 directories = "6.0.0"
-# accessing peripherals
+# Accessing peripherals.
 firefly-hal = "0.5.3"
-# running the app
+# Running the app.
 firefly-runtime = "0.14.0"
-# drawing custom menus
+# Drawing custom menus.
 embedded-graphics = "0.8.2"
-# showing frame buffer on the screen
+# Showing frame buffer on the screen.
+# Don't update: 0.29.0 is vibe-coded.
 minifb = "0.28.0"
 
-# [patch.crates-io]
-# firefly-audio = { path = "../firefly-audio" }
-# firefly-runtime = { path = "../firefly-runtime" }
-# firefly-hal = { path = "../firefly-hal" }
+[patch.crates-io]
+firefly-audio = { path = "../firefly-audio" }
+firefly-runtime = { path = "../firefly-runtime" }
+firefly-hal = { path = "../firefly-hal" }
 
 # Required to be able to run dev builds without wasmi segfaulting.
 [profile.dev]
