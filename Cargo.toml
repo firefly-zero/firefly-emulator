@@ -1,6 +1,6 @@
 [package]
 name = "firefly-emulator"
-version = "0.14.0"
+version = "0.15.0"
 rust-version = "1.98.1"
 edition = "2024"
 description = "Desktop emulator for Firefly Zero"
@@ -13,9 +13,9 @@ clap = { version = "4.6.6", features = ["derive"] }
 # Finding the VFS location.
 directories = "6.0.0"
 # Accessing peripherals.
-firefly-hal = "0.5.3"
+firefly-hal = "0.6.0"
 # Running the app.
-firefly-runtime = "0.14.0"
+firefly-runtime = "0.15.0"
 # Drawing custom menus.
 embedded-graphics = "0.8.2"
 # Write wav files.
@@ -26,10 +26,10 @@ minifb = "0.28.0"
 # Play audio through speakers.
 rodio = { version = "0.21.1", features = ["playback"] }
 
-[patch.crates-io]
-firefly-audio = { path = "../firefly-audio" }
-firefly-runtime = { path = "../firefly-runtime" }
-firefly-hal = { path = "../firefly-hal" }
+# [patch.crates-io]
+# firefly-audio = { path = "../firefly-audio" }
+# firefly-runtime = { path = "../firefly-runtime" }
+# firefly-hal = { path = "../firefly-hal" }
 
 # Required to be able to run dev builds without wasmi segfaulting.
 [profile.dev]
